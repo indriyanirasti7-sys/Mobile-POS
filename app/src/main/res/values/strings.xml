@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Selaras POS</string>
-    <string name="selamat_pagi">Selamat Pagi</string>
+    <string name="Selamat_Pagi">Selamat Pagi</string>
+    <string name="tanggal">8 Januari 2026</string>
+    <string name="transaksi">Transaksi</string>
+    <string name="laporan">Laporan</string>
+    <string name="produk">Produk</string>
+    <string name="kategori">Kategori</string>
+    <string name="pegawai">Pegawai</string>
+    <string name="printer">Printer</string>
+    <string name="beranda">Beranda</string>
+    <string name="cabang">Cabang</string>
+    <string name="tambahan">Tambahan</string>
+    <string name="akun">Akun</string>
+    <string name="estimasi_hari_ini">Estimasi hari Ini</string>
 </resources>

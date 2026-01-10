@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Selaras POS</string>
-    <string name="selamat_pagi">Good Morning</string>
+    <string name="Selamat_Pagi">Good Morning</string>
+    <string name="tanggal">8 January 2026</string>
+    <string name="transaksi">Transaction</string>
+    <string name="laporan">Report</string>
+    <string name="produk">Product</string>
+    <string name="kategori">Category</string>
+    <string name="pegawai">Employee</string>
+    <string name="printer">Printers</string>
+    <string name="beranda">Home</string>
+    <string name="cabang">Branch</string>
+    <string name="tambahan">Addition</string>
+    <string name="akun">Account</string>
+    <string name="estimasi_hari_ini">"Today's Estimate "</string>
 </resources>
