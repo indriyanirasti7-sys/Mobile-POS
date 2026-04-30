@@ -14,4 +14,10 @@
     <string name="tambahan">Addition</string>
     <string name="akun">Account</string>
     <string name="estimasi_hari_ini">"Today's Estimate "</string>
+    <string name="tambah_kategori">Add Category</string>
+    <string name="nama_kategori">Category Name</string>
+    <string name="penjualan">Poin Of Sale </string>
+    <string name="data_kategori">Category Data</string>
+    <string name="simpan">Save</string>
+    <string name="masukkan_nama_kategori">Input Category Name</string>
 </resources>

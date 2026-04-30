@@ -4,5 +4,17 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_light">#d0d6eb</color>
     <color name="white_dark">#e3e1f2</color>
+    <color name="white_pink">#f0a4c5</color>
+    <color name="white_pink2">#f8dde2</color>
+    <color name="cream">#f7f7d7</color>
+    <color name="green_light">#E8F5E9</color>
+    <color name="green_dark">#2E7D32</color>
+    <color name="purple">#c7a6ed</color>
+    <color name="navy">#010080</color>
+
+
+
+
+
 
 </resources>

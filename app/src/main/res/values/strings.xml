@@ -13,4 +13,14 @@
     <string name="tambahan">Tambahan</string>
     <string name="akun">Akun</string>
     <string name="estimasi_hari_ini">Estimasi hari Ini</string>
+    <string name="tambah_kategori">Tambah Kategori</string>
+    <string name="nama_kategori">Nama Kategori</string>
+    <string name="masukkan_nama_kategori">Masukkan Nama Kategori</string>
+    <string name="penjualan">Penjualan</string>
+    <string name="data_kategori">Data Kategori</string>
+    <string name="simpan">Simpan</string>
+    <string-array name="status_array">
+        <item>Aktif</item>
+        <item>Tidak Aktif</item>
+    </string-array>
 </resources>
