@@ -3,27 +3,45 @@ package com.rasti.selaraspos
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.rasti.selaraspos.kategori.DataKategoriActivity
+import com.rasti.selaraspos.produk.DataProdukActivity
 
 class Halaman_Utama : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_halaman_utama)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        val beranda_kategori = findViewById<View>(R.id.beranda_kategori)
 
-        beranda_kategori.setOnClickListener{
+        // Panggil fungsi untuk mengatur klik pada semua card
+        setupCardClickListeners()
+    }
+
+    private fun setupCardClickListeners() {
+
+
+
+
+        // 5. Card Layanan (Produk)
+        val cardLayanan = findViewById<CardView>(R.id.cardLayanan)
+        cardLayanan.setOnClickListener {
+            Toast.makeText(this, "Membuka Halaman Produk", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, DataProdukActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 6. Card Tambahan (Kategori)
+        val cardTambahan = findViewById<CardView>(R.id.cardTambahan)
+        cardTambahan.setOnClickListener {
+            Toast.makeText(this, "Membuka Halaman Kategori", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, DataKategoriActivity::class.java)
             startActivity(intent)
         }
+
+
     }
 }

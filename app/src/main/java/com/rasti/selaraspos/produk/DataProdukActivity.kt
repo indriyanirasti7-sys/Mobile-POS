@@ -83,7 +83,7 @@ class DataProdukActivity : AppCompatActivity() {
     private fun init() {
           // Pastikan ID ini sama persis dengan yang ada di activity_data_produk.xml
         rvDataProduk = findViewById(R.id.rvProduk)
-        tvKosong = findViewById(R.id.tvData_Produk_Kosong)
+        tvKosong = findViewById(R.id.tvDataProdukKosong)
         fabTambahProduk = findViewById(R.id.fabDataProdukTambah)
     }
 }

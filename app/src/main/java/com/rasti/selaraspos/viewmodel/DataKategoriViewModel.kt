@@ -67,6 +67,6 @@ class DataKategoriViewModel: ViewModel() {
             kategoriList.value = ArrayList(filteredList)
             isSearchEmty.value = filteredList.isEmpty()
         }
-                }
+    }
 
     }
