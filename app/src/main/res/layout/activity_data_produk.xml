@@ -147,6 +147,8 @@
         android:src="@drawable/tambah"
         app:backgroundTint="@color/white"
         android:layout_margin="24dp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Tambah Produk"/>

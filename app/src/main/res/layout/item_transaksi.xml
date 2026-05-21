@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#EEEEEE"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- Gambar Produk -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgProduk"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop"
+            android:src="@android:color/darker_gray"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.MaterialComponents.MediumComponent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <!-- Nama Produk -->
+        <TextView
+            android:id="@+id/tvNamaProduk"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Smoke Tenderloin Slice Croissant"
+            android:textColor="#212121"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintStart_toEndOf="@id/imgProduk"
+            app:layout_constraintEnd_toStartOf="@id/layoutCounter"
+            app:layout_constraintTop_toTopOf="@id/imgProduk"/>
+
+        <!-- Harga Produk -->
+        <TextView
+            android:id="@+id/tvHargaProduk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$10.01"
+            android:textColor="#FF7A00"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@id/tvNamaProduk"
+            app:layout_constraintTop_toBottomOf="@id/tvNamaProduk"/>
+
+        <!-- Counter -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/layoutCounter"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvHargaProduk"
+            app:layout_constraintBottom_toBottomOf="@id/tvHargaProduk">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="4dp">
+
+                <!-- Tombol Minus -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnKurang"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="0dp"
+                    app:icon="@android:drawable/ic_menu_delete"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconTint="#FFFFFF"
+                    app:backgroundTint="#FF7A00"
+                    app:cornerRadius="12dp"/>
+
+                <!-- Jumlah -->
+                <TextView
+                    android:id="@+id/tvJumlah"
+                    android:layout_width="28dp"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:gravity="center"
+                    android:textColor="#212121"
+                    android:textStyle="bold"
+                    android:textSize="13sp"/>
+
+                <!-- Tombol Tambah -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTambah"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minWidth="0dp"
+                    app:icon="@android:drawable/ic_input_add"
+                    app:iconGravity="textStart"
+                    app:iconPadding="0dp"
+                    app:iconTint="#FFFFFF"
+                    app:backgroundTint="#FF7A00"
+                    app:cornerRadius="12dp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

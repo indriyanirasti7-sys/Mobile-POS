@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -153,7 +154,6 @@
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
                 app:boxCornerRadiusTopStart="8dp">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNamaProduk"
                     android:layout_width="match_parent"
@@ -171,9 +171,26 @@
                 app:boxCornerRadiusTopEnd="8dp"
                 app:boxCornerRadiusTopStart="8dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSkuProduk"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="SKU (Opsional)" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etBarcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Barcode (Opsional)" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
@@ -201,6 +218,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Cabang"
+                android:textColor="#6750A4"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPilihCabang"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="8dp"
+                android:text="Pilih Cabang"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="#49454F"
+                app:cornerRadius="25dp"
+                app:icon="@android:drawable/ic_dialog_map"
+                app:strokeColor="#79747E" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="Harga &amp; Keuntungan"
                 android:textColor="#6750A4"
@@ -216,6 +255,7 @@
                 app:boxCornerRadiusTopEnd="8dp"
                 app:boxCornerRadiusTopStart="8dp">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etHargaBeli"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Harga Beli"
@@ -231,9 +271,25 @@
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
                 app:boxCornerRadiusTopStart="8dp">
-
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etHargaProduk"
+                    android:id="@+id/etNilaiProfit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nilai Profit"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:boxCornerRadiusBottomEnd="8dp"
+                app:boxCornerRadiusBottomStart="8dp"
+                app:boxCornerRadiusTopEnd="8dp"
+                app:boxCornerRadiusTopStart="8dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etHargaJual"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Harga Jual"
@@ -243,7 +299,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:text="(Otomatis terhitung)"
+                android:textColor="#757575"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Manajemen Stok"
                 android:textColor="#6750A4"
                 android:textStyle="bold" />
@@ -257,7 +321,6 @@
                 app:boxCornerRadiusBottomStart="8dp"
                 app:boxCornerRadiusTopEnd="8dp"
                 app:boxCornerRadiusTopStart="8dp">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etStokProduk"
                     android:layout_width="match_parent"
@@ -266,11 +329,17 @@
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Spinner
-                android:id="@+id/spinnerStatusProduk"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="16dp"/> </LinearLayout>
+            <CheckBox
+                android:id="@+id/cbStokTakTerbatas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:buttonTint="#6750A4"
+                android:text="Stok Tak Terbatas"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        </LinearLayout>
     </ScrollView>
 
     <com.google.android.material.button.MaterialButton

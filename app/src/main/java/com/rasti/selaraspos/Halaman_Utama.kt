@@ -22,7 +22,12 @@ class Halaman_Utama : AppCompatActivity() {
     }
 
     private fun setupCardClickListeners() {
-
+        val cardTransaksi = findViewById<CardView>(R.id.cardTransaksi)
+        cardTransaksi.setOnClickListener {
+            Toast.makeText(this, "Membuka Halaman Transaksi", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, DataProdukActivity::class.java)
+            startActivity(intent)
+        }
 
 
 
