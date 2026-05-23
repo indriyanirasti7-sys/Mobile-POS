@@ -3,50 +3,131 @@ package com.rasti.selaraspos
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.rasti.selaraspos.kategori.DataKategoriActivity
-import com.rasti.selaraspos.produk.DataProdukActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.rasti.selaraspos.activities.AkunActivity
+import com.rasti.selaraspos.activities.LaporanActivity
+import com.rasti.selaraspos.activities.PrinterActivity
+import com.rasti.selaraspos.activities.TransaksiActivity
+import com.rasti.selaraspos.cabang.DataCabangActivity
+import com.rasti.selaraspos.pegawai.DataPegawaiActivity
+import java.text.SimpleDateFormat
+import java.util.*
 
-class Halaman_Utama : AppCompatActivity() {
+class HalamanUtama : AppCompatActivity() {
+
+    // ===== VIEW BINDING manual =====
+    private lateinit var tvGreeting: TextView
+    private lateinit var tvNamaPengguna: TextView
+    private lateinit var tvTotalTransaksi: TextView
+    private lateinit var tvTotalProduk: TextView
+    private lateinit var tvTotalPegawai: TextView
+    private lateinit var loadingOverlay: FrameLayout
+
+    // Menu cards
+    private lateinit var cardTransaksi: CardView
+    private lateinit var cardLaporan: CardView
+    private lateinit var cardAkun: CardView
+    private lateinit var cardPegawai: CardView
+    private lateinit var cardCabang: CardView
+    private lateinit var cardPrinter: CardView
+
+    // Firebase
+    private val database = FirebaseDatabase.getInstance()
+    private var idKasir = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_halaman_utama)
 
-        // Panggil fungsi untuk mengatur klik pada semua card
-        setupCardClickListeners()
+        // Ambil ID Kasir dari SharedPreferences
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        idKasir = prefs.getString("idKasir", "") ?: ""
+
+        initViews()
+        setNamaUser()
+        loadStatistik()
+        setupMenuClick()
     }
 
-    private fun setupCardClickListeners() {
-        val cardTransaksi = findViewById<CardView>(R.id.cardTransaksi)
-        cardTransaksi.setOnClickListener {
-            Toast.makeText(this, "Membuka Halaman Transaksi", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, DataProdukActivity::class.java)
-            startActivity(intent)
-        }
+    // ===== INISIALISASI VIEW =====
+    private fun initViews() {
+        tvGreeting = findViewById(R.id.tvGreeting)
+        tvNamaPengguna = findViewById(R.id.tvNamaPengguna)
+        tvTotalTransaksi = findViewById(R.id.tvTotalTransaksi)
+        tvTotalProduk = findViewById(R.id.tvTotalProduk)
+        tvTotalPegawai = findViewById(R.id.tvTotalPegawai)
+        loadingOverlay = findViewById(R.id.loadingOverlay)
+        cardTransaksi = findViewById(R.id.cardTransaksi)
+        cardLaporan = findViewById(R.id.cardLaporan)
+        cardAkun = findViewById(R.id.cardAkun)
+        cardPegawai = findViewById(R.id.cardPegawai)
+        cardCabang = findViewById(R.id.cardCabang)
+        cardPrinter = findViewById(R.id.cardPrinter)
+    }
 
+    // ===== TAMPILKAN NAMA USER DARI SHAPREFS & DATABASE =====
+    private fun setNamaUser() {
+        // Ambil nama dari SharedPreferences agar cepat tampil
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val namaLokal = prefs.getString("namaKasir", "Pengguna")
+        tvNamaPengguna.text = namaLokal
+    }
 
+    // ===== LOAD STATISTIK DARI FIREBASE =====
+    private fun loadStatistik() {
+        showLoading(true)
 
-        // 5. Card Layanan (Produk)
-        val cardLayanan = findViewById<CardView>(R.id.cardLayanan)
-        cardLayanan.setOnClickListener {
-            Toast.makeText(this, "Membuka Halaman Produk", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, DataProdukActivity::class.java)
-            startActivity(intent)
-        }
+        val hariIni = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
-        // 6. Card Tambahan (Kategori)
-        val cardTambahan = findViewById<CardView>(R.id.cardTambahan)
-        cardTambahan.setOnClickListener {
-            Toast.makeText(this, "Membuka Halaman Kategori", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, DataKategoriActivity::class.java)
-            startActivity(intent)
-        }
+        database.getReference("transaksi")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var countTransaksi = 0L
+                    for (item in snapshot.children) {
+                        val tanggal = item.child("tanggal").getValue(String::class.java) ?: ""
+                        if (tanggal.startsWith(hariIni)) countTransaksi++
+                    }
+                    tvTotalTransaksi.text = countTransaksi.toString()
+                    showLoading(false)
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    showLoading(false)
+                }
+            })
 
+        database.getReference("produk").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                tvTotalProduk.text = snapshot.childrenCount.toString()
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
 
+        database.getReference("pegawai").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                tvTotalPegawai.text = snapshot.childrenCount.toString()
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+    // ===== SETUP CLICK MENU =====
+    private fun setupMenuClick() {
+        cardTransaksi.setOnClickListener { startActivity(Intent(this, TransaksiActivity::class.java)) }
+        cardLaporan.setOnClickListener { startActivity(Intent(this, LaporanActivity::class.java)) }
+        cardAkun.setOnClickListener { startActivity(Intent(this, AkunActivity::class.java)) }
+        cardPegawai.setOnClickListener { startActivity(Intent(this, DataPegawaiActivity::class.java)) }
+        cardCabang.setOnClickListener { startActivity(Intent(this, DataCabangActivity::class.java)) }
+        cardPrinter.setOnClickListener { startActivity(Intent(this, PrinterActivity::class.java)) }
+    }
+
+    private fun showLoading(show: Boolean) {
+        loadingOverlay.visibility = if (show) View.VISIBLE else View.GONE
     }
 }

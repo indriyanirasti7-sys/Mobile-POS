@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.SelarasPOS" parent="Base.Theme.SelarasPOS" />
+    <style name="Widget.SelarasPOS.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <!-- Pengaturan gaya Anda di sini -->
+    </style>
 </resources>

@@ -18,9 +18,109 @@
     <string name="masukkan_nama_kategori">Masukkan Nama Kategori</string>
     <string name="penjualan">Penjualan</string>
     <string name="data_kategori">Data Kategori</string>
-    <string name="simpan">Simpan</string>
     <string-array name="status_array">
         <item>Aktif</item>
         <item>Tidak Aktif</item>
     </string-array>
+
+        <!-- Navigation -->
+        <string name="menu_dashboard">Dashboard</string>
+        <string name="menu_transaksi">Transaksi</string>
+        <string name="menu_laporan">Laporan</string>
+        <string name="menu_akun">Akun</string>
+        <string name="menu_pegawai">Pegawai</string>
+        <string name="menu_cabang">Cabang</string>
+        <string name="menu_printer">Printer</string>
+
+        <!-- Dashboard -->
+        <string name="selamat_datang">Selamat Datang 👋</string>
+        <string name="subtitle_dashboard">Kelola bisnis Anda dengan mudah</string>
+        <string name="total_transaksi">Total Transaksi</string>
+        <string name="total_produk">Total Produk</string>
+        <string name="total_pegawai">Total Pegawai</string>
+        <string name="statistik_hari_ini">Statistik Hari Ini</string>
+
+        <!-- Transaksi -->
+        <string name="title_transaksi">Transaksi Baru</string>
+        <string name="cari_produk">Cari produk…</string>
+        <string name="keranjang">Keranjang</string>
+        <string name="subtotal">Subtotal</string>
+        <string name="total">Total</string>
+        <string name="bayar">Bayar</string>
+        <string name="uang_bayar">Uang Bayar</string>
+        <string name="kembalian">Kembalian</string>
+        <string name="metode_pembayaran">Metode Pembayaran</string>
+        <string name="cash">Cash</string>
+        <string name="qris">QRIS</string>
+        <string name="transfer">Transfer</string>
+        <string name="proses_pembayaran">Proses Pembayaran</string>
+        <string name="transaksi_berhasil">Transaksi berhasil disimpan!</string>
+        <string name="keranjang_kosong">Keranjang masih kosong</string>
+        <string name="print_struk">Print Struk</string>
+
+        <!-- Laporan -->
+        <string name="title_laporan">Laporan Penjualan</string>
+        <string name="laporan_harian">Harian</string>
+        <string name="laporan_mingguan">Mingguan</string>
+        <string name="laporan_bulanan">Bulanan</string>
+        <string name="total_penjualan">Total Penjualan</string>
+        <string name="filter_tanggal">Filter Tanggal</string>
+        <string name="filter_cabang">Filter Cabang</string>
+        <string name="data_kosong">Data tidak ditemukan</string>
+
+        <!-- Akun -->
+        <string name="title_akun">Profil Saya</string>
+        <string name="edit_profil">Edit Profil</string>
+        <string name="logout">Keluar</string>
+        <string name="konfirmasi_logout">Yakin ingin keluar?</string>
+        <string name="nama_pengguna">Nama Pengguna</string>
+        <string name="email">Email</string>
+        <string name="role">Role</string>
+
+        <!-- Pegawai -->
+        <string name="title_data_pegawai">Data Pegawai</string>
+        <string name="tambah_pegawai">Tambah Pegawai</string>
+        <string name="edit_pegawai">Edit Pegawai</string>
+        <string name="hapus_pegawai">Hapus Pegawai</string>
+        <string name="nama_pegawai">Nama Pegawai</string>
+        <string name="no_hp">Nomor HP</string>
+        <string name="alamat">Alamat</string>
+        <string name="pilih_role">Pilih Role</string>
+        <string name="role_admin">Admin</string>
+        <string name="role_kasir">Kasir</string>
+        <string name="konfirmasi_hapus_pegawai">Yakin ingin menghapus pegawai ini?</string>
+
+        <!-- Cabang -->
+        <string name="title_data_cabang">Data Cabang</string>
+        <string name="tambah_cabang">Tambah Cabang</string>
+        <string name="edit_cabang">Edit Cabang</string>
+        <string name="hapus_cabang">Hapus Cabang</string>
+        <string name="nama_cabang">Nama Cabang</string>
+        <string name="alamat_cabang">Alamat Cabang</string>
+        <string name="telepon_cabang">Telepon Cabang</string>
+        <string name="penanggung_jawab">Penanggung Jawab</string>
+        <string name="konfirmasi_hapus_cabang">Yakin ingin menghapus cabang ini?</string>
+
+        <!-- Printer -->
+        <string name="title_printer">Pengaturan Printer</string>
+        <string name="scan_printer">Scan Printer</string>
+        <string name="connect_printer">Hubungkan</string>
+        <string name="disconnect_printer">Putuskan</string>
+        <string name="test_print">Test Print</string>
+        <string name="status_terhubung">Terhubung</string>
+        <string name="status_tidak_terhubung">Tidak Terhubung</string>
+        <string name="printer_tersedia">Printer Tersedia</string>
+
+        <!-- Common -->
+        <string name="simpan">Simpan</string>
+        <string name="batal">Batal</string>
+        <string name="hapus">Hapus</string>
+        <string name="edit">Edit</string>
+        <string name="ya">Ya</string>
+        <string name="tidak">Tidak</string>
+        <string name="loading">Memuat…</string>
+        <string name="sukses">Berhasil!</string>
+        <string name="gagal">Gagal!</string>
+        <string name="input_tidak_valid">Input tidak valid</string>
+        <string name="field_wajib_diisi">Field ini wajib diisi</string>
 </resources>
