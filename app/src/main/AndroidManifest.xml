@@ -3,18 +3,12 @@
     package="com.rasti.selaraspos">
 
     <!-- ===== PERMISSIONS ===== -->
-    <!-- Internet untuk Firebase -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- Bluetooth untuk printer -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <!-- Android 12+ -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-
-    <!-- Kamera & Storage untuk foto profil / produk -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -31,7 +25,7 @@
 
         <!-- ===== LAUNCHER ACTIVITY ===== -->
         <activity
-            android:name=".HalamanUtama"
+            android:name=".Halaman_Utama"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
@@ -84,6 +78,32 @@
 
         <activity
             android:name=".cabang.ModCabangActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ===== PRODUK ===== -->
+        <activity
+            android:name=".produk.DataProdukActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".produk.ModProdukActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ===== KATEGORI ===== -->
+        <activity
+            android:name=".kategori.DataKategoriActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".kategori.ModKategoriActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />

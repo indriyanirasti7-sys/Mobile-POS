@@ -1,82 +1,109 @@
 package com.rasti.selaraspos.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.rasti.selaraspos.model.ModelProduk
 
 class DataProdukViewModel : ViewModel() {
 
-    private val database = FirebaseDatabase.getInstance()
+    private val database =
+        FirebaseDatabase.getInstance(
+            "https://selaraspos-6ce12-default-rtdb.firebaseio.com/"
+        )
 
-    // Referensi ke tabel "produk" di Firebase
-    private val myRef = database.getReference("produk")
+    private val myRef =
+        database.getReference("produk")
 
-    val produkList = MutableLiveData<ArrayList<ModelProduk>>()
-    private var originalProdukList = ArrayList<ModelProduk>()
+    private val _produkList =
+        MutableLiveData<List<ModelProduk>>()
 
-    private val searchQuery = MutableLiveData<String?>()
-    val isLoading = MutableLiveData<Boolean>()
-    val isSearchEmpty = MutableLiveData<Boolean>()
+    val produkList: LiveData<List<ModelProduk>> =
+        _produkList
 
-    init {
-        getData()
-    }
+    private val _isLoading =
+        MutableLiveData<Boolean>()
+
+    val isLoading: LiveData<Boolean> =
+        _isLoading
+
+    // Simpan semua data asli untuk filter
+    private val allProdukList =
+        mutableListOf<ModelProduk>()
+
+    private var listener: ValueEventListener? = null
 
     fun getData() {
-        isLoading.value = true
-        // Pastikan di Firebase kamu menggunakan "idProduk" sebagai child-nya
-        val query = myRef.orderByChild("idProduk").limitToLast(100)
 
-        query.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                isLoading.value = false
-                if (snapshot.exists()) {
-                    val list = ArrayList<ModelProduk>()
-                    for (dataSnapshot in snapshot.children) {
-                        val produk = dataSnapshot.getValue(ModelProduk::class.java)
-                        if (produk == null) {
-                            Log.e("DataProdukViewModel", "Failed to parse produk")
-                        } else {
-                            list.add(produk)
-                        }
+        _isLoading.value = true
+
+        listener = object : ValueEventListener {
+
+            override fun onDataChange(
+                snapshot: DataSnapshot
+            ) {
+
+                allProdukList.clear()
+
+                for (data in snapshot.children) {
+
+                    val produk =
+                        data.getValue(
+                            ModelProduk::class.java
+                        )
+
+                    if (produk != null) {
+
+                        allProdukList.add(produk)
                     }
-                    originalProdukList.clear()
-                    originalProdukList.addAll(list)
-                    produkList.value = list
-                    isSearchEmpty.value = false
-                    Log.d("DataProdukViewModel", "Loaded ${list.size} produk items.")
-                } else {
-                    originalProdukList.clear()
-                    produkList.value = ArrayList()
-                    isSearchEmpty.value = true
-                    Log.d("DataProdukViewModel", "No produk data found.")
                 }
+
+                _produkList.value =
+                    allProdukList.toList()
+
+                _isLoading.value = false
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                isLoading.value = false
-                Log.e("DataProdukViewModel", "Database error: ${error.message}")
+            override fun onCancelled(
+                error: DatabaseError
+            ) {
+
+                _isLoading.value = false
             }
-        })
+        }
+
+        myRef.addValueEventListener(listener!!)
     }
 
-    fun filterList(query: String?) {
-        searchQuery.value = query
-        if (query.isNullOrEmpty()) {
-            produkList.value = originalProdukList
-            isSearchEmpty.value = false
-        } else {
-            val filteredList = originalProdukList.filter {
-                // Pastikan nama variabel di ModelProduk adalah namaProduk
-                it.namaProduk?.lowercase()?.contains(query.lowercase()) == true
-            }
-            produkList.value = ArrayList(filteredList)
-            isSearchEmpty.value = filteredList.isEmpty()
+    fun filterList(query: String) {
+
+        if (query.isEmpty()) {
+
+            _produkList.value =
+                allProdukList.toList()
+
+            return
+        }
+
+        val filtered = allProdukList.filter { produk ->
+            val namaMatch = produk.namaProduk?.contains(query, ignoreCase = true) == true
+            val kategoriMatch = produk.kategoriProduk?.contains(query, ignoreCase = true) == true
+            val skuMatch = produk.skuProduk?.contains(query, ignoreCase = true) == true
+
+            namaMatch || kategoriMatch || skuMatch
+        }
+
+        _produkList.value = filtered
+    }
+
+    override fun onCleared() {
+
+        super.onCleared()
+
+        // Hapus listener saat ViewModel destroyed
+        listener?.let {
+            myRef.removeEventListener(it)
         }
     }
 }

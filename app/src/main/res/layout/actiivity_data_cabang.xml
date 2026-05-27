@@ -103,7 +103,7 @@
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:src="@android:drawable/ic_menu_mapmode"
-            android:tint="@color/border"
+            android:backgroundTint="@color/border"
             android:alpha="0.5" />
 
         <TextView
@@ -132,7 +132,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
         android:backgroundTint="@color/primary"
-        android:text="+ Tambah"
         android:textColor="@color/white"
         app:icon="@android:drawable/ic_input_add"
         app:iconTint="@color/white" />
