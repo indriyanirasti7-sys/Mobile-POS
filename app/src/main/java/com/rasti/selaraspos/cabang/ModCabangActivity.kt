@@ -1,147 +1,77 @@
 package com.rasti.selaraspos.cabang
 
+
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.rasti.selaraspos.R
+import com.rasti.selaraspos.adapters.AdapterCabang
+import com.rasti.selaraspos.adapters.AdapterPegawai
+import com.rasti.selaraspos.databinding.ActivityDataCabangBinding
+import com.rasti.selaraspos.databinding.ActivityDataPegawaiBinding
+import com.rasti.selaraspos.databinding.ActivityModCabangBinding
+import com.rasti.selaraspos.databinding.ActivityModPegawaiBinding
+import com.rasti.selaraspos.databinding.ActivityPrinterBinding
 import com.rasti.selaraspos.model.ModelCabang
-
+import com.rasti.selaraspos.model.ModelPegawai
+import java.io.OutputStream
+import java.util.UUID
 class ModCabangActivity : AppCompatActivity() {
 
-    // View Components
-    private lateinit var tvTitleMod: TextView
-    private lateinit var etNamaCabang: TextInputEditText
-    private lateinit var etAlamatCabang: TextInputEditText
-    private lateinit var etTeleponCabang: TextInputEditText
-    private lateinit var etPenanggungJawab: TextInputEditText
-    private lateinit var btnSimpan: Button
-    private lateinit var btnHapus: Button
-    private lateinit var loadingOverlay: FrameLayout
-    private lateinit var btnBack: ImageButton
-
-    private val database = FirebaseDatabase.getInstance()
-    private var idCabang = ""
-    private var isEditMode = false
+    private lateinit var binding: ActivityModCabangBinding
+    private val db = FirebaseDatabase.getInstance().reference.child("cabang")
+    private var mode = "TAMBAH"; private var idEdit = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_mod_cabang)
+        binding = ActivityModCabangBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        initViews()
-        cekModeEdit()
+        mode = intent.getStringExtra("MODE") ?: "TAMBAH"
+        binding.tvJudulModCabang.text = if (mode == "EDIT") "Edit Cabang" else "Tambah Cabang"
 
-        btnBack.setOnClickListener { finish() }
-        btnSimpan.setOnClickListener { validasiDanSimpan() }
-        btnHapus.setOnClickListener { konfirmasiHapus() }
-    }
-
-    private fun initViews() {
-        tvTitleMod = findViewById(R.id.tvTitleMod)
-        etNamaCabang = findViewById(R.id.etNamaCabang)
-        etAlamatCabang = findViewById(R.id.etAlamatCabang)
-        etTeleponCabang = findViewById(R.id.etTeleponCabang)
-        etPenanggungJawab = findViewById(R.id.etPenanggungJawab)
-        btnSimpan = findViewById(R.id.btnSimpanCabang)
-        btnHapus = findViewById(R.id.btnHapusCabang)
-        loadingOverlay = findViewById(R.id.loadingOverlay)
-        btnBack = findViewById(R.id.btnBack)
-    }
-
-    private fun cekModeEdit() {
-        idCabang = intent.getStringExtra("idCabang") ?: ""
-        isEditMode = idCabang.isNotEmpty()
-
-        if (isEditMode) {
-            tvTitleMod.text = "Edit Cabang"
-            btnSimpan.text = "Perbarui Cabang"
-            btnHapus.visibility = View.VISIBLE
-
-            etNamaCabang.setText(intent.getStringExtra("namaCabang") ?: "")
-            etAlamatCabang.setText(intent.getStringExtra("alamatCabang") ?: "")
-            etTeleponCabang.setText(intent.getStringExtra("teleponCabang") ?: "")
-            etPenanggungJawab.setText(intent.getStringExtra("penanggungJawab") ?: "")
-        }
-    }
-
-    private fun validasiDanSimpan() {
-        val nama = etNamaCabang.text.toString().trim()
-        val alamat = etAlamatCabang.text.toString().trim()
-        val telepon = etTeleponCabang.text.toString().trim()
-        val pj = etPenanggungJawab.text.toString().trim()
-
-        if (nama.isEmpty()) {
-            etNamaCabang.error = "Nama cabang wajib diisi"
-            return
-        }
-        if (alamat.isEmpty()) {
-            etAlamatCabang.error = "Alamat wajib diisi"
-            return
+        if (mode == "EDIT") {
+            idEdit = intent.getStringExtra("ID_CABANG") ?: ""
+            binding.etNamaCabang.setText(intent.getStringExtra("NAMA_CABANG") ?: "")
+            binding.etAlamatCabang.setText(intent.getStringExtra("ALAMAT_CABANG") ?: "")
+            binding.etTeleponCabang.setText(intent.getStringExtra("TELEPON_CABANG") ?: "")
+            binding.etPjCabang.setText(intent.getStringExtra("PJ_CABANG") ?: "")
         }
 
-        if (isEditMode) updateCabang(nama, alamat, telepon, pj)
-        else tambahCabang(nama, alamat, telepon, pj)
+        binding.btnSimpanCabang.setOnClickListener { simpan() }
+        binding.btnKembali.setOnClickListener { finish() }
     }
 
-    private fun tambahCabang(nama: String, alamat: String, telepon: String, pj: String) {
-        showLoading(true)
-        val ref = database.getReference("cabang")
-        val id = ref.push().key ?: return
+    private fun simpan() {
+        val nama = binding.etNamaCabang.text.toString().trim()
+        val alamat = binding.etAlamatCabang.text.toString().trim()
+        val telepon = binding.etTeleponCabang.text.toString().trim()
+        val pj = binding.etPjCabang.text.toString().trim()
+        if (nama.isEmpty()) { binding.tilNamaCabang.error = "Wajib diisi"; return }
+        binding.tilNamaCabang.error = null
+        binding.progressSimpanCabang.visibility = View.VISIBLE; binding.btnSimpanCabang.isEnabled = false
 
-        val cabang = ModelCabang(id, nama, alamat, telepon, pj)
-
-        ref.child(id).setValue(cabang)
-            .addOnSuccessListener {
-                showLoading(false)
-                Toast.makeText(this, "Berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-            .addOnFailureListener {
-                showLoading(false)
-                Toast.makeText(this, "Gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun updateCabang(nama: String, alamat: String, telepon: String, pj: String) {
-        showLoading(true)
-        val updates = mapOf(
-            "namaCabang" to nama,
-            "alamatCabang" to alamat,
-            "teleponCabang" to telepon,
-            "penanggungJawab" to pj
-        )
-        database.getReference("cabang/$idCabang").updateChildren(updates)
-            .addOnSuccessListener {
-                showLoading(false)
-                Toast.makeText(this, "Data diperbarui!", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-            .addOnFailureListener {
-                showLoading(false)
-                Toast.makeText(this, "Gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun konfirmasiHapus() {
-        AlertDialog.Builder(this)
-            .setTitle("Hapus Cabang")
-            .setMessage("Yakin ingin menghapus?")
-            .setPositiveButton("Ya") { _, _ ->
-                showLoading(true)
-                database.getReference("cabang/$idCabang").removeValue()
-                    .addOnSuccessListener {
-                        showLoading(false)
-                        finish()
-                    }
-            }
-            .setNegativeButton("Batal", null)
-            .show()
-    }
-
-    private fun showLoading(show: Boolean) {
-        loadingOverlay.visibility = if (show) View.VISIBLE else View.GONE
+        if (mode == "TAMBAH") {
+            val id = db.push().key ?: return
+            db.child(id).setValue(ModelCabang(id, nama, alamat, telepon, pj))
+                .addOnSuccessListener { binding.progressSimpanCabang.visibility = View.GONE; Toast.makeText(this, "✅ Cabang ditambahkan!", Toast.LENGTH_SHORT).show(); finish() }
+                .addOnFailureListener { binding.progressSimpanCabang.visibility = View.GONE; binding.btnSimpanCabang.isEnabled = true }
+        } else {
+            db.child(idEdit).updateChildren(mapOf("namaCabang" to nama, "alamatCabang" to alamat, "teleponCabang" to telepon, "penanggungjawab" to pj))
+                .addOnSuccessListener { binding.progressSimpanCabang.visibility = View.GONE; Toast.makeText(this, "✅ Cabang diperbarui!", Toast.LENGTH_SHORT).show(); finish() }
+                .addOnFailureListener { binding.progressSimpanCabang.visibility = View.GONE; binding.btnSimpanCabang.isEnabled = true }
+        }
     }
 }

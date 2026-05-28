@@ -8,8 +8,8 @@ import kotlin.times
 data class ModelKeranjang(
     var idProduk: String = "",
     var namaProduk: String = "",
-    var hargaJual: Long = 0,
+    var hargaJual: Long = 0L,
     var qty: Int = 1,
-    var subtotal: Long = 0,
+    var subtotal: Long = 0L,
     var fotoProduk: String = ""
 )
