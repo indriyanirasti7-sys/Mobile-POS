@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -60,6 +61,7 @@ class AkunActivity : AppCompatActivity() {
                     val role = snapshot.child("role").getValue(String::class.java) ?: "kasir"
                     val email = auth.currentUser?.email ?: ""
                     val noHp = snapshot.child("noHp").getValue(String::class.java) ?: "-"
+                    val fotoUrl = snapshot.child("fotoPegawai").getValue(String::class.java) ?: ""
 
                     // Ambil username dari email (sebelum @)
                     val username = email.substringBefore("@")
@@ -72,7 +74,20 @@ class AkunActivity : AppCompatActivity() {
                     binding.tvUsername.text = username
                     binding.tvNamaToko.text = "Selaras POS"
 
-                    // 🔥 CHIP ROLE - untuk badge visual (Admin/Kasir) 🔥
+                    // 🔥 LOAD AVATAR (tanpa ic_avatar_default) 🔥
+                    if (fotoUrl.isNotEmpty()) {
+                        Glide.with(this@AkunActivity)
+                            .load(fotoUrl)
+                            .circleCrop()
+                            .into(binding.imgAvatar)
+                    } else {
+                        // Jika tidak ada foto, tampilkan inisial nama
+                        binding.imgAvatar.setImageResource(R.drawable.bg_avatar)
+                        // Atau set background warna
+                        binding.imgAvatar.setBackgroundColor(getColor(R.color.primary))
+                    }
+
+                    // Badge role dengan Chip
                     if (role == "admin") {
                         binding.chipRole.text = "👑 Admin"
                         binding.chipRole.setChipBackgroundColorResource(R.color.primary)
@@ -89,7 +104,7 @@ class AkunActivity : AppCompatActivity() {
 
                 override fun onCancelled(e: DatabaseError) {
                     binding.progressAkun.visibility = View.GONE
-                    Toast.makeText(this@AkunActivity, "Gagal memuat data: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AkunActivity, "Gagal memuat数据: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             })
     }

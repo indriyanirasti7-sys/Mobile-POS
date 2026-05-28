@@ -34,32 +34,54 @@ class DataPegawaiActivity : AppCompatActivity() {
     private val db = FirebaseDatabase.getInstance().reference.child("pegawai")
     private val list = mutableListOf<ModelPegawai>()
     private lateinit var adapter: AdapterPegawai
+    private var isAdmin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDataPegawaiBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = AdapterPegawai(list,
+        // 🔥 CEK ROLE USER 🔥
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val role = prefs.getString("role", "kasir") ?: "kasir"
+        isAdmin = role == "admin"
+
+        // Sembunyikan FAB Tambah jika bukan admin
+        if (!isAdmin) {
+            binding.fabTambahPegawai.visibility = View.GONE
+        }
+
+        adapter = AdapterPegawai(
+            list,
+            isAdmin,  // ← Kirim isAdmin ke adapter
             onEdit = { p ->
-                // Perbaikan di sini: Hapus "com.rasti.selaraspos.activities."
-                startActivity(Intent(this, ModPegawaiActivity::class.java).apply {
-                    putExtra("MODE", "EDIT")
-                    putExtra("ID_PEGAWAI", p.idPegawai)
-                    putExtra("NAMA_PEGAWAI", p.namaPegawai)
-                    putExtra("ROLE", p.role)
-                    putExtra("NO_HP", p.noHp)
-                    putExtra("ALAMAT", p.alamat)
-                    putExtra("EMAIL", p.email)
-                })
+                if (isAdmin) {
+                    startActivity(Intent(this, ModPegawaiActivity::class.java).apply {
+                        putExtra("MODE", "EDIT")
+                        putExtra("ID_PEGAWAI", p.idPegawai)
+                        putExtra("NAMA_PEGAWAI", p.namaPegawai)
+                        putExtra("ROLE", p.role)
+                        putExtra("NO_HP", p.noHp)
+                        putExtra("ALAMAT", p.alamat)
+                        putExtra("EMAIL", p.email)
+                        putExtra("STATUS", p.status)
+                    })
+                } else {
+                    Toast.makeText(this, "Hanya admin yang bisa mengedit", Toast.LENGTH_SHORT).show()
+                }
             },
             onHapus = { p ->
-                AlertDialog.Builder(this).setTitle("Hapus Pegawai")
-                    .setMessage("Yakin hapus \"${p.namaPegawai}\"?")
-                    .setPositiveButton("Hapus") { _, _ -> db.child(p.idPegawai).removeValue() }
-                    .setNegativeButton("Batal", null).show()
+                if (isAdmin) {
+                    AlertDialog.Builder(this).setTitle("Hapus Pegawai")
+                        .setMessage("Yakin hapus \"${p.namaPegawai}\"?")
+                        .setPositiveButton("Hapus") { _, _ -> db.child(p.idPegawai).removeValue() }
+                        .setNegativeButton("Batal", null).show()
+                } else {
+                    Toast.makeText(this, "Hanya admin yang bisa menghapus", Toast.LENGTH_SHORT).show()
+                }
             }
         )
+
         binding.rvPegawai.layoutManager = LinearLayoutManager(this)
         binding.rvPegawai.adapter = adapter
 
@@ -77,8 +99,13 @@ class DataPegawaiActivity : AppCompatActivity() {
         })
 
         binding.fabTambahPegawai.setOnClickListener {
-            startActivity(Intent(this, ModPegawaiActivity::class.java))
+            if (isAdmin) {
+                startActivity(Intent(this, ModPegawaiActivity::class.java))
+            } else {
+                Toast.makeText(this, "Hanya admin yang bisa menambah", Toast.LENGTH_SHORT).show()
+            }
         }
+
         binding.btnKembali.setOnClickListener { finish() }
     }
 }
