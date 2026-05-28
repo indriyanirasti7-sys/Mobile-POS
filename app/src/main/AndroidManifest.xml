@@ -134,6 +134,19 @@
             android:exported="false"
             android:screenOrientation="sensor" />
 
+        <!-- ===== PELANGGAN ===== -->
+        <activity
+            android:name=".pelanggan.DataPelangganActivity"
+            android:exported="false"
+            android:screenOrientation="sensor"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".pelanggan.ModPelangganActivity"
+            android:exported="false"
+            android:screenOrientation="sensor"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>
