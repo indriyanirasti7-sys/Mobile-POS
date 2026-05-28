@@ -1,68 +1,75 @@
-package com.selaraspos.adapter
+package com.rasti.selaraspos.adapters
 
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.rasti.selaraspos.R
+import com.rasti.selaraspos.model.ModelCabang
+import com.rasti.selaraspos.model.ModelKeranjang
+import com.rasti.selaraspos.model.ModelLaporan
+import com.rasti.selaraspos.model.ModelPegawai
 import com.rasti.selaraspos.model.ModelProduk
-import java.net.URL
 import java.text.NumberFormat
 import java.util.Locale
-import kotlin.concurrent.thread
+
+// ─── AdapterProdukTransaksi ──────────────────────────────────────────────────
 
 class AdapterProdukTransaksi(
     private val listProduk: MutableList<ModelProduk>,
-    private val onProdukClick: (ModelProduk) -> Unit
-) : RecyclerView.Adapter<AdapterProdukTransaksi.ViewHolder>() {
+    private val onKlik: (ModelProduk) -> Unit
+) : RecyclerView.Adapter<AdapterProdukTransaksi.VH>() {
 
-    private val listAsli: MutableList<ModelProduk> = mutableListOf()
-
+    private val listAsli = mutableListOf<ModelProduk>()
     init { listAsli.addAll(listProduk) }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imgProdukTrx: ImageView = view.findViewById(R.id.imgProdukTrx)
-        val tvNamaProdukTrx: TextView = view.findViewById(R.id.tvNamaProdukTrx)
-        val tvHargaProdukTrx: TextView = view.findViewById(R.id.tvHargaProdukTrx)
-        val tvStokProdukTrx: TextView = view.findViewById(R.id.tvStokProdukTrx)
-
-        fun bind(produk: ModelProduk) {
-            tvNamaProdukTrx.text = produk.namaProduk
-            tvHargaProdukTrx.text = formatRupiah(produk.hargaJual)
-            tvStokProdukTrx.text = "Stok: ${produk.stokProduk}"
-
-            // Download Gambar Manual
-            imgProdukTrx.setImageResource(R.drawable.placeholder)
-            if (produk.fotoProduk.isNotEmpty()) {
-                thread {
-                    try {
-                        val bmp = BitmapFactory.decodeStream(URL(produk.fotoProduk).openStream())
-                        imgProdukTrx.post { imgProdukTrx.setImageBitmap(bmp) }
-                    } catch (e: Exception) { /* ignore */ }
-                }
-            }
-
-            itemView.alpha = if (produk.stokProduk > 0) 1f else 0.4f
-            itemView.isEnabled = produk.stokProduk > 0
-            itemView.setOnClickListener { if (produk.stokProduk > 0) onProdukClick(produk) }
-        }
+    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+        val img: ImageView = v.findViewById(R.id.imgProdukTrx)
+        val tvNama: TextView = v.findViewById(R.id.tvNamaProdukTrx)
+        val tvHarga: TextView = v.findViewById(R.id.tvHargaProdukTrx)
+        val tvStok: TextView = v.findViewById(R.id.tvStokProdukTrx)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_produk_transaksi, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(
+        LayoutInflater.from(p.context).inflate(R.layout.item_produk_transaksi, p, false)
+    )
+
+    override fun onBindViewHolder(h: VH, pos: Int) {
+        val p = listProduk[pos]
+        h.tvNama.text = p.namaProduk
+        h.tvHarga.text = formatRp(p.hargaJual)
+        h.tvStok.text = "Stok: ${p.stokProduk}"
+        h.itemView.alpha = if (p.stokProduk > 0) 1f else 0.4f
+        h.itemView.isEnabled = p.stokProduk > 0
+
+        Glide.with(h.img.context).load(p.fotoProduk)
+            .apply(RequestOptions().transform(RoundedCorners(12))
+                .placeholder(R.drawable.produk).error(R.drawable.produk))
+            .into(h.img)
+
+        h.itemView.setOnClickListener { if (p.stokProduk > 0) onKlik(p) }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(listProduk[position])
-    override fun getItemCount(): Int = listProduk.size
+    override fun getItemCount() = listProduk.size
 
-    fun filter(query: String) {
+    fun filter(q: String) {
         listProduk.clear()
-        if (query.isEmpty()) listProduk.addAll(listAsli)
-        else listProduk.addAll(listAsli.filter { it.namaProduk.contains(query, true) })
+        if (q.isEmpty()) listProduk.addAll(listAsli)
+        else listAsli.filter { it.namaProduk.lowercase().contains(q.lowercase()) }
+            .also { listProduk.addAll(it) }
+        notifyDataSetChanged()
+    }
+
+    fun filterKategori(kat: String) {
+        listProduk.clear()
+        if (kat == "Semua") listProduk.addAll(listAsli)
+        else listAsli.filter { it.kategoriProduk == kat }.also { listProduk.addAll(it) }
         notifyDataSetChanged()
     }
 
@@ -72,5 +79,17 @@ class AdapterProdukTransaksi(
         notifyDataSetChanged()
     }
 
-    private fun formatRupiah(harga: Long) = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(harga)
+    private fun formatRp(h: Long) = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(h)
 }
+
+// ─── AdapterKeranjang ────────────────────────────────────────────────────────
+
+
+// ─── AdapterLaporan ──────────────────────────────────────────────────────────
+
+
+
+// ─── AdapterPegawai ──────────────────────────────────────────────────────────
+
+
+// ─── AdapterCabang ───────────────────────────────────────────────────────────

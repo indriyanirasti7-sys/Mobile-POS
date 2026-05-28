@@ -1,87 +1,120 @@
 package com.rasti.selaraspos.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.*
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.rasti.selaraspos.LoginActivity
 import com.rasti.selaraspos.R
-import com.rasti.selaraspos.model.ModelAkun
-
+import com.rasti.selaraspos.RoleHelper
+import com.rasti.selaraspos.adapters.AdapterLaporan
+import com.rasti.selaraspos.databinding.ActivityAkunBinding
+import com.rasti.selaraspos.databinding.ActivityLaporanBinding
+import com.rasti.selaraspos.model.ModelLaporan
+import com.rasti.selaraspos.model.ModelTransaksi
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 class AkunActivity : AppCompatActivity() {
 
-    private lateinit var tvNamaPenggunaProfil: TextView
-    private lateinit var tvRoleBadge: TextView
-    private lateinit var tvEmailProfil: TextView
-    private lateinit var tvInfoNama: TextView
-    private lateinit var tvInfoEmail: TextView
-    private lateinit var tvInfoRole: TextView
-    private lateinit var btnLogout: Button
-    private lateinit var btnBack: ImageButton
-
-    private val database = FirebaseDatabase.getInstance()
-
-    private var modelAkun: ModelAkun? = null
-    private var idKasir = ""
+    private lateinit var binding: ActivityAkunBinding
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_akun)
+        binding = ActivityAkunBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Ambil ID Kasir dari SharedPreferences
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        idKasir = prefs.getString("idKasir", "") ?: ""
+        muatDataAkun()
 
-        initViews()
-        loadProfilAkun()
+        binding.btnEditProfil.setOnClickListener { dialogEditProfil() }
 
-        btnBack.setOnClickListener { finish() }
-        btnLogout.setOnClickListener { konfirmasiLogout() }
-
-        // Catatan: Jika tombol Edit Nama sudah dihapus dari XML,
-        // pastikan tidak ada kode btnEditProfil.setOnClickListener di sini.
-    }
-
-    private fun initViews() {
-        tvNamaPenggunaProfil = findViewById(R.id.tvNamaPenggunaProfil)
-        tvRoleBadge = findViewById(R.id.tvRoleBadge)
-        tvEmailProfil = findViewById(R.id.tvEmailProfil)
-        tvInfoNama = findViewById(R.id.tvInfoNama)
-        tvInfoEmail = findViewById(R.id.tvInfoEmail)
-        tvInfoRole = findViewById(R.id.tvInfoRole)
-        btnLogout = findViewById(R.id.btnLogout)
-        btnBack = findViewById(R.id.btnBack)
-    }
-
-    private fun loadProfilAkun() {
-        if (idKasir.isEmpty()) return
-
-        database.getReference("akun/$idKasir")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val akun = snapshot.getValue(ModelAkun::class.java) ?: return
-                    modelAkun = akun
-
-                    tvNamaPenggunaProfil.text = akun.namaUser
-                    tvRoleBadge.text = akun.role.replaceFirstChar { it.uppercase() }
-                    tvEmailProfil.text = akun.email.ifEmpty { "–" }
-                    tvInfoNama.text = akun.namaUser.ifEmpty { "–" }
-                    tvInfoEmail.text = akun.email.ifEmpty { "–" }
-                    tvInfoRole.text = akun.role.replaceFirstChar { it.uppercase() }.ifEmpty { "–" }
+        binding.btnLogout.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Yakin ingin keluar?")
+                .setPositiveButton("Logout") { _, _ ->
+                    // Hapus data lokal
+                    getSharedPreferences("user_prefs", MODE_PRIVATE).edit().clear().apply()
+                    auth.signOut()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finishAffinity()
                 }
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@AkunActivity, "Gagal memuat data", Toast.LENGTH_SHORT).show()
+                .setNegativeButton("Batal", null)
+                .show()
+        }
+
+        binding.btnKembali.setOnClickListener { finish() }
+    }
+
+    private fun muatDataAkun() {
+        val uid = auth.currentUser?.uid ?: return
+        binding.progressAkun.visibility = View.VISIBLE
+
+        db.child("pegawai").child(uid)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    binding.progressAkun.visibility = View.GONE
+                    val nama = snapshot.child("namaPegawai").getValue(String::class.java) ?: "Pengguna"
+                    val role = snapshot.child("role").getValue(String::class.java) ?: "kasir"
+                    val email = auth.currentUser?.email ?: ""
+
+                    binding.tvNamaAkun.text = nama
+                    binding.tvEmailAkun.text = email
+                    binding.tvRoleAkun.text = role.replaceFirstChar { it.uppercase() }
+
+                    // Badge role
+                    if (role == "admin") {
+                        binding.chipRole.text = "👑 Admin"
+                        binding.chipRole.setChipBackgroundColorResource(R.color.primary)
+                    } else {
+                        binding.chipRole.text = "💼 Kasir"
+                        binding.chipRole.setChipBackgroundColorResource(R.color.text_secondary)
+                    }
+
+                    // Menu admin hanya untuk admin
+                    val adminVisible = if (role == "admin") View.VISIBLE else View.GONE
+                    binding.layoutMenuAdmin.visibility = adminVisible
+                    binding.tvLabelMenuAdmin.visibility = adminVisible
+                }
+                override fun onCancelled(e: DatabaseError) {
+                    binding.progressAkun.visibility = View.GONE
                 }
             })
     }
 
-    private fun konfirmasiLogout() {
+    private fun dialogEditProfil() {
+        val uid = auth.currentUser?.uid ?: return
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_profil, null)
+        val etNama = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etNamaEdit)
+        etNama.setText(binding.tvNamaAkun.text.toString())
+
         AlertDialog.Builder(this)
-            .setTitle("Keluar")
-            .setMessage("Yakin ingin keluar?")
-            .setPositiveButton("Ya") { _, _ ->
-                getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply()
-                finishAffinity()
+            .setTitle("Edit Nama")
+            .setView(dialogView)
+            .setPositiveButton("Simpan") { _, _ ->
+                val namaBaru = etNama.text.toString().trim()
+                if (namaBaru.isEmpty()) { Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show(); return@setPositiveButton }
+
+                db.child("pegawai").child(uid).child("namaPegawai").setValue(namaBaru)
+                    .addOnSuccessListener {
+                        // Perbarui juga SharedPreferences
+                        getSharedPreferences("user_prefs", MODE_PRIVATE).edit()
+                            .putString("nama", namaBaru).apply()
+                        Toast.makeText(this, "✅ Nama diperbarui!", Toast.LENGTH_SHORT).show()
+                        muatDataAkun()
+                    }
             }
             .setNegativeButton("Batal", null)
             .show()
