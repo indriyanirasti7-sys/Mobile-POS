@@ -1,12 +1,10 @@
-<resources >
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SelarasPOS" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
-
-    <style name="Theme.SelarasPOS" parent="Base.Theme.SelarasPOS" />
-    <style name="Widget.SelarasPOS.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <!-- Pengaturan gaya Anda di sini -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SelarasPOS" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- warna untuk mode terang -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
     </style>
 </resources>
