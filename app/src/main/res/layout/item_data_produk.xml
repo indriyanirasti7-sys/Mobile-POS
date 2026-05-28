@@ -72,11 +72,13 @@
                 android:layout_marginTop="2dp" />
         </LinearLayout>
 
-        <!-- Tombol Aksi -->
+        <!-- LAYOUT AKSI (Dibungkus agar bisa disembunyikan jika bukan admin) -->
         <LinearLayout
+            android:id="@+id/layoutAksiProduk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditProduk"
@@ -99,6 +101,8 @@
                 android:textColor="@color/text_on_primary"
                 app:backgroundTint="@color/error"
                 app:cornerRadius="8dp" />
+
         </LinearLayout>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
