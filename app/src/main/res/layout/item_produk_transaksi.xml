@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- item_produk_transaksi.xml - Grid produk di halaman transaksi -->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,13 +18,16 @@
         android:padding="10dp"
         android:gravity="center_horizontal">
 
+        <!-- Image Produk -->
         <ImageView
             android:id="@+id/imgProdukTrx"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="100dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/placeholder" />
+            android:src="@drawable/placeholder"
+            app:cornerRadius="12dp" />
 
+        <!-- Nama Produk -->
         <TextView
             android:id="@+id/tvNamaProdukTrx"
             android:layout_width="match_parent"
@@ -36,8 +38,10 @@
             android:textColor="@color/text_primary"
             android:maxLines="2"
             android:ellipsize="end"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:gravity="center" />
 
+        <!-- Harga Produk -->
         <TextView
             android:id="@+id/tvHargaProdukTrx"
             android:layout_width="match_parent"
@@ -46,8 +50,10 @@
             android:textSize="13sp"
             android:textColor="@color/primary"
             android:textStyle="bold"
-            android:layout_marginTop="2dp" />
+            android:layout_marginTop="2dp"
+            android:gravity="center" />
 
+        <!-- Stok Produk -->
         <TextView
             android:id="@+id/tvStokProdukTrx"
             android:layout_width="match_parent"
@@ -55,6 +61,8 @@
             android:text="Stok: 0"
             android:textSize="11sp"
             android:textColor="@color/text_secondary"
-            android:layout_marginTop="2dp" />
+            android:layout_marginTop="2dp"
+            android:gravity="center" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
