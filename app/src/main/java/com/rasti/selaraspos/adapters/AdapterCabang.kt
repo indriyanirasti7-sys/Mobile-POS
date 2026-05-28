@@ -4,65 +4,54 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.rasti.selaraspos.model.ModelCabang
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.rasti.selaraspos.R
+import com.rasti.selaraspos.model.ModelCabang
+import com.rasti.selaraspos.model.ModelKeranjang
+import com.rasti.selaraspos.model.ModelLaporan
+import com.rasti.selaraspos.model.ModelPegawai
+import com.rasti.selaraspos.model.ModelProduk
+import java.text.NumberFormat
+import java.util.Locale
 
 
-    class AdapterCabang(
-        private var listCabang: MutableList<ModelCabang>,
-        private val onEditClick: (ModelCabang) -> Unit
-    ) : RecyclerView.Adapter<AdapterCabang.ViewHolder>() {
+class AdapterCabang(
+    private val list: MutableList<ModelCabang>,
+    private val onEdit: (ModelCabang) -> Unit,
+    private val onHapus: (ModelCabang) -> Unit
+) : RecyclerView.Adapter<AdapterCabang.VH>() {
 
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val tvNama: TextView = itemView.findViewById(R.id.tvNamaCabangItem)
-            val tvAlamat: TextView = itemView.findViewById(R.id.tvAlamatCabangItem)
-            val tvTelepon: TextView = itemView.findViewById(R.id.tvTeleponCabangItem)
-            val tvPJ: TextView = itemView.findViewById(R.id.tvPJCabangItem)
-            val btnEdit: ImageButton = itemView.findViewById(R.id.btnEditCabangItem)
-        }
+    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+        val tvNama: TextView = v.findViewById(R.id.tvNamaCabangItem)
+        val tvAlamat: TextView = v.findViewById(R.id.tvAlamatCabangItem)
+        val tvTelepon: TextView = v.findViewById(R.id.tvTeleponCabangItem)
+        val tvPj: TextView = v.findViewById(R.id.tvPJCabangItem)
+        val btnEdit: TextView = v.findViewById(R.id.btnEditCabangItem)
+        val btnHapus: TextView = v.findViewById(R.id.btnHapusCabangItem)
+    }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_cabang, parent, false)
-            return ViewHolder(view)
-        }
+    override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(
+        LayoutInflater.from(p.context).inflate(R.layout.item_cabang, p, false)
+    )
 
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val cabang = listCabang[position]
+    override fun onBindViewHolder(h: VH, pos: Int) {
+        val d = list[pos]
+        h.tvNama.text = d.namaCabang
+        h.tvAlamat.text = d.alamatCabang
+        h.tvTelepon.text = d.teleponCabang
+        h.tvPj.text = "PJ: ${d.penanggungjawab}"
+        h.btnEdit.setOnClickListener { onEdit(d) }
+        h.btnHapus.setOnClickListener { onHapus(d) }
+    }
 
-            holder.tvNama.text    = cabang.namaCabang
-            holder.tvAlamat.text  = cabang.alamatCabang.ifEmpty { "Alamat belum diisi" }
-            holder.tvTelepon.text = cabang.teleponCabang.ifEmpty { "–" }
-            holder.tvPJ.text      = cabang.penanggungjawab.ifEmpty { "–" }
+    override fun getItemCount() = list.size
 
-            holder.btnEdit.setOnClickListener { onEditClick(cabang) }
-            holder.itemView.setOnClickListener { onEditClick(cabang) }
-        }
-
-        override fun getItemCount(): Int = listCabang.size
-
-        fun updateData(data: List<ModelCabang>) {
-            listCabang.clear()
-            listCabang.addAll(data)
-            notifyDataSetChanged()
-        }
-
-        fun filter(keyword: String, dataOriginal: List<ModelCabang>) {
-            listCabang.clear()
-            if (keyword.isEmpty()) {
-                listCabang.addAll(dataOriginal)
-            } else {
-                val lower = keyword.lowercase()
-                listCabang.addAll(
-                    dataOriginal.filter {
-                        it.namaCabang.lowercase().contains(lower) ||
-                                it.alamatCabang.lowercase().contains(lower) ||
-                                it.penanggungjawab.lowercase().contains(lower)
-                    }
-                )
-            }
-            notifyDataSetChanged()
-        }
+    fun updateData(data: List<ModelCabang>) {
+        list.clear(); list.addAll(data); notifyDataSetChanged()
+    }
 }

@@ -1,237 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical"
-    tools:context=".pegawai.ModPegawaiActivity">
+    android:background="@color/background_light"
+    android:fillViewport="true">
 
-    <!-- TOOLBAR -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="@drawable/bg_gradient_header"
-        android:paddingStart="8dp"
-        android:paddingEnd="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_revert"
-            android:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/tvTitleMod"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Tambah Pegawai"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:fontFamily="sans-serif-medium" />
-    </RelativeLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
+        <!-- Header dengan Tombol Kembali di pojok kiri -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginBottom="16dp">
 
-            <!-- FORM CARD -->
-            <androidx.cardview.widget.CardView
+            <ImageButton
+                android:id="@+id/btnKembali"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_back"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:scaleType="center"
+                android:contentDescription="Kembali" />
+
+            <TextView
+                android:id="@+id/tvJudulModPegawai"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/border"
-                app:strokeWidth="1dp">
+                android:text="Tambah Pegawai"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:gravity="center" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+        </RelativeLayout>
 
-                    <!-- Nama Pegawai -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Nama Pegawai"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
+        <!-- Field Nama Pegawai -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNamaPegawai"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:errorEnabled="true">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etNamaPegawai"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Masukkan nama lengkap"
-                            android:inputType="textPersonName"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- No HP -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Nomor HP"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etNoHpPegawai"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="08xxxxxxxxxx"
-                            android:inputType="phone"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Alamat -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Alamat"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etAlamatPegawai"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Masukkan alamat lengkap"
-                            android:inputType="textMultiLine"
-                            android:minLines="2"
-                            android:gravity="top"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- Role -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:text="Role Pegawai"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <RadioGroup
-                        android:id="@+id/rgRole"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:orientation="horizontal">
-
-                        <RadioButton
-                            android:id="@+id/rbAdmin"
-                            android:layout_width="0dp"
-                            android:layout_height="44dp"
-                            android:layout_marginEnd="8dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_tab_unselected"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:text="👑 Admin"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-
-                        <RadioButton
-                            android:id="@+id/rbKasir"
-                            android:layout_width="0dp"
-                            android:layout_height="44dp"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_tab_unselected"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:text="🏪 Kasir"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </RadioGroup>
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- SAVE BUTTON -->
-            <Button
-                android:id="@+id/btnSimpanPegawai"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNamaPegawai"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/bg_button_primary"
-                android:text="Simpan Pegawai"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium" />
+                android:layout_height="wrap_content"
+                android:hint="Nama Pegawai"
+                android:inputType="textPersonName"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- DELETE BUTTON (edit mode only) -->
-            <Button
-                android:id="@+id/btnHapusPegawai"
+        <!-- Field Nomor HP -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNoHp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNoHp"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_tab_unselected"
-                android:text="Hapus Pegawai"
-                android:textColor="@color/error"
-                android:textSize="16sp"
-                android:visibility="gone" />
+                android:layout_height="wrap_content"
+                android:hint="Nomor HP"
+                android:inputType="phone"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        <!-- Field Alamat -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAlamatPegawai"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary">
 
-    <!-- Loading overlay -->
-    <FrameLayout
-        android:id="@+id/loadingOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/scrim"
-        android:visibility="gone">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etAlamatPegawai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Alamat"
+                android:inputType="textPostalAddress"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Field Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmailPegawai"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmailPegawai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Field Role Pegawai -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Role Pegawai"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilRole"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            app:boxStrokeColor="@color/primary"
+            app:hintTextColor="@color/primary"
+            app:errorEnabled="true">
+
+            <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/actvRole"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Pilih Role"
+                android:inputType="none"
+                android:textColor="@color/text_primary" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Progress Bar -->
         <ProgressBar
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:id="@+id/progressSimpanPegawai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
             android:indeterminateTint="@color/primary" />
-    </FrameLayout>
 
-</LinearLayout>
+        <!-- Tombol Simpan Pegawai -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSimpanPegawai"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Simpan Pegawai"
+            android:textSize="16sp"
+            android:textColor="@color/text_on_primary"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/primary" />
+
+    </LinearLayout>
+</ScrollView>
