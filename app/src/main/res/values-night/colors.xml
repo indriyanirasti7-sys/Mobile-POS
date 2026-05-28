@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===== SELARAS POS DARK MODE - COKLAT + TEKS COKLAT TUA ===== -->
+
+    <!-- Primary Colors -->
+    <color name="primary">#FEA8BB</color>
+    <color name="primary_dark">#E78FA5</color>
+    <color name="primary_light">#FFD3DE</color>
+    <color name="primary_variant">#F9809A</color>
+    <color name="warna_lain">#532b1f</color>
+
+    <!-- Background (coklat seperti kode AC8067) -->
+    <color name="background">#AC8067</color>
+    <color name="background_light">#C49A80</color>
+
+    <!-- Surface / Card (coklat lebih terang) -->
+    <color name="surface">#D4B094</color>
+    <color name="surface_variant">#E0C4A8</color>
+
+    <!-- Border -->
+    <color name="border">#8B6954</color>
+    <color name="divider">#A8826A</color>
+
+    <!-- Text (COKLAT TUA 443025) -->
+    <color name="text_primary">#443025</color>
+    <color name="text_secondary">#5C4536</color>
+    <color name="text_hint">#7A5E4A</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <!-- Status Colors -->
+    <color name="success">#6BBF6F</color>
+    <color name="success_light">#2D4A2F</color>
+    <color name="warning">#E5A860</color>
+    <color name="warning_light">#4A3A22</color>
+    <color name="error">#D66A6A</color>
+    <color name="error_light">#4A2A2A</color>
+
+    <!-- Gradient (coklat ke pink) -->
+    <color name="gradient_start">#FEA8BB</color>
+    <color name="gradient_end">#E78FA5</color>
+
+    <!-- White & Black -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Overlay -->
+    <color name="overlay_light">#33FEA8BB</color>
+    <color name="scrim">#99000000</color>
+
+    <!-- Menu Icon Colors -->
+    <color name="icon_transaksi">#FEA8BB</color>
+    <color name="icon_laporan">#FEA8BB</color>
+    <color name="icon_akun">#FEA8BB</color>
+    <color name="icon_pegawai">#FEA8BB</color>
+    <color name="icon_cabang">#FEA8BB</color>
+    <color name="icon_printer">#FEA8BB</color>
+
+</resources>
