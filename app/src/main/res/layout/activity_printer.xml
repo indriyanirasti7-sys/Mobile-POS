@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background_light">
 
-    <!-- Header dengan Tombol Kembali -->
+    <!-- Header -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,9 +15,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:orientation="horizontal"
-            android:padding="16dp"
+            android:paddingHorizontal="12dp"
             android:gravity="center_vertical">
 
             <ImageView
@@ -27,6 +26,7 @@
                 android:layout_height="32dp"
                 android:src="@drawable/ic_back"
                 android:padding="4dp"
+                android:tint="@color/white"
                 android:contentDescription="Kembali" />
 
             <TextView
@@ -36,17 +36,12 @@
                 android:text="Pengaturan Printer"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_on_primary"
+                android:textColor="@color/white"
                 android:gravity="center" />
-
-            <View
-                android:layout_width="32dp"
-                android:layout_height="32dp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Konten Scrollable -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -57,12 +52,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Status Koneksi -->
+            <!-- Status Bluetooth Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="@color/surface">
 
@@ -70,163 +65,117 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp"
-                    android:gravity="center">
+                    android:padding="16dp">
 
-                    <!-- Icon Printer -->
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/ic_printer"
-                        android:tint="@color/text_secondary"
-                        android:alpha="0.6" />
-
-                    <!-- Status Teks -->
                     <TextView
-                        android:id="@+id/tvStatusKoneksi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tidak Terhubung"
-                        android:textSize="16sp"
+                        android:text="Status Bluetooth"
+                        android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="@color/error"
-                        android:layout_marginTop="12dp" />
+                        android:textColor="@color/text_primary" />
 
-                    <!-- Nama Printer Tersimpan -->
                     <TextView
-                        android:id="@+id/tvPrinterTersimpan"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tvStatusBluetooth"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text=""
+                        android:text="Mengecek..."
                         android:textSize="12sp"
                         android:textColor="@color/text_secondary"
-                        android:layout_marginTop="4dp" />
+                        android:layout_marginTop="8dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Tombol-tombol Aksi -->
+            <!-- Status Koneksi Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Status Koneksi"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/text_primary" />
+
+                    <TextView
+                        android:id="@+id/tvStatusKoneksi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Belum terhubung"
+                        android:textSize="12sp"
+                        android:textColor="@color/text_secondary"
+                        android:layout_marginTop="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvPrinterTersimpan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="12sp"
+                        android:textColor="@color/primary"
+                        android:layout_marginTop="4dp" />
+
+                    <ProgressBar
+                        android:id="@+id/progressPrinter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone"
+                        android:indeterminateTint="@color/primary" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Tombol Aksi -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
 
-                <!-- Tombol Scan -->
-                <com.google.android.material.card.MaterialCardView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnScanPrinter"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="@color/primary">
+                    android:text="Scan Printer"
+                    android:textSize="13sp"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="10dp"
+                    android:layout_marginEnd="8dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/ic_scan"
-                            android:tint="@color/text_on_primary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Scan"
-                            android:textSize="12sp"
-                            android:textColor="@color/text_on_primary"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Tombol Putuskan -->
-                <com.google.android.material.card.MaterialCardView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDisconnect"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="@color/surface"
+                    android:text="Putuskan"
+                    android:textSize="13sp"
+                    android:textColor="@color/error"
                     app:strokeColor="@color/error"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/ic_dosconnect"
-                            android:tint="@color/error" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Putuskan"
-                            android:textSize="12sp"
-                            android:textColor="@color/error"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Tombol Test Print -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btnTestPrint"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="@color/surface"
-                    app:strokeColor="@color/primary"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:src="@drawable/ic_printer"
-                            android:tint="@color/primary" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Test Print"
-                            android:textSize="12sp"
-                            android:textColor="@color/primary"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    app:strokeWidth="1dp"
+                    app:backgroundTint="@color/white"
+                    app:cornerRadius="10dp"
+                    android:layout_marginStart="8dp" />
 
             </LinearLayout>
 
-            <!-- Bagian Printer Tersedia -->
+            <!-- Daftar Printer -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -234,44 +183,26 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="8dp" />
 
-            <!-- Progress Bar saat scanning -->
-            <ProgressBar
-                android:id="@+id/progressPrinter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="12dp"
-                android:visibility="gone"
-                android:indeterminateTint="@color/primary" />
-
-            <!-- List Printer (akan diisi dari kode) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPrinterList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="visible" />
+                android:nestedScrollingEnabled="false" />
 
-            <!-- Pesan tidak ada printer -->
             <TextView
                 android:id="@+id/tvEmptyPrinter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tidak ada printer ditemukan"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 android:textColor="@color/text_hint"
                 android:gravity="center"
                 android:padding="24dp"
                 android:visibility="gone" />
 
-            <!-- Status Bluetooth (tersembunyi, untuk debug) -->
-            <TextView
-                android:id="@+id/tvStatusBluetooth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>
