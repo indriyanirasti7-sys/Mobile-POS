@@ -1,181 +1,86 @@
 package com.rasti.selaraspos.pegawai
 
+
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageButton
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.rasti.selaraspos.R
+import com.rasti.selaraspos.adapters.AdapterCabang
+import com.rasti.selaraspos.adapters.AdapterPegawai
+import com.rasti.selaraspos.databinding.ActivityDataCabangBinding
+import com.rasti.selaraspos.databinding.ActivityDataPegawaiBinding
+import com.rasti.selaraspos.databinding.ActivityModCabangBinding
+import com.rasti.selaraspos.databinding.ActivityModPegawaiBinding
+import com.rasti.selaraspos.databinding.ActivityPrinterBinding
+import com.rasti.selaraspos.model.ModelCabang
 import com.rasti.selaraspos.model.ModelPegawai
+import java.io.OutputStream
+import java.util.UUID
 
+class ModPegawaiActivity : AppCompatActivity() {
 
-    class ModPegawaiActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityModPegawaiBinding
+    private val db = FirebaseDatabase.getInstance().reference.child("pegawai")
+    private var mode = "TAMBAH"; private var idEdit = ""
 
-        private lateinit var tvTitleMod: TextView
-        private lateinit var etNama: TextInputEditText
-        private lateinit var etNoHp: TextInputEditText
-        private lateinit var etAlamat: TextInputEditText
-        private lateinit var rgRole: RadioGroup
-        private lateinit var rbAdmin: RadioButton
-        private lateinit var rbKasir: RadioButton
-        private lateinit var btnSimpan: Button
-        private lateinit var btnHapus: Button
-        private lateinit var loadingOverlay: FrameLayout
-        private lateinit var btnBack: ImageButton
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityModPegawaiBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        private val database = FirebaseDatabase.getInstance()
+        val roles = listOf("admin", "kasir")
+        binding.actvRole.setAdapter(android.widget.ArrayAdapter(this,
+            android.R.layout.simple_dropdown_item_1line, roles))
 
-        // Data mode edit
-        private var idPegawai  = ""
-        private var isEditMode = false
+        mode = intent.getStringExtra("MODE") ?: "TAMBAH"
+        binding.tvJudulModPegawai.text = if (mode == "EDIT") "Edit Pegawai" else "Tambah Pegawai"
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_mod_pegawai)
+        if (mode == "EDIT") {
+            idEdit = intent.getStringExtra("ID_PEGAWAI") ?: ""
+            binding.etNamaPegawai.setText(intent.getStringExtra("NAMA_PEGAWAI") ?: "")
+            binding.actvRole.setText(intent.getStringExtra("ROLE") ?: "kasir", false)
+            binding.etNoHp.setText(intent.getStringExtra("NO_HP") ?: "")
+            binding.etAlamatPegawai.setText(intent.getStringExtra("ALAMAT") ?: "")
+            binding.etEmailPegawai.setText(intent.getStringExtra("EMAIL") ?: "")
+            binding.tilEmailPegawai.isEnabled = false
+        } else binding.actvRole.setText("kasir", false)
 
-            initViews()
-            cekModeEdit()
+        binding.btnSimpanPegawai.setOnClickListener { simpan() }
+        binding.btnKembali.setOnClickListener { finish() }
+    }
 
-            btnBack.setOnClickListener { finish() }
-            btnSimpan.setOnClickListener { validasiDanSimpan() }
-            btnHapus.setOnClickListener { konfirmasiHapus() }
+    private fun simpan() {
+        val nama = binding.etNamaPegawai.text.toString().trim()
+        val role = binding.actvRole.text.toString().trim()
+        val noHp = binding.etNoHp.text.toString().trim()
+        val alamat = binding.etAlamatPegawai.text.toString().trim()
+        val email = binding.etEmailPegawai.text.toString().trim()
+        if (nama.isEmpty()) { binding.tilNamaPegawai.error = "Wajib diisi"; return }
+        if (role.isEmpty()) { binding.tilRole.error = "Wajib dipilih"; return }
+        binding.tilNamaPegawai.error = null; binding.tilRole.error = null
+        binding.progressSimpanPegawai.visibility = View.VISIBLE; binding.btnSimpanPegawai.isEnabled = false
+
+        if (mode == "TAMBAH") {
+            val id = db.push().key ?: return
+            db.child(id).setValue(ModelPegawai(id, nama, role, noHp, alamat, email))
+                .addOnSuccessListener { binding.progressSimpanPegawai.visibility = View.GONE; Toast.makeText(this, "✅ Pegawai ditambahkan!", Toast.LENGTH_SHORT).show(); finish() }
+                .addOnFailureListener { binding.progressSimpanPegawai.visibility = View.GONE; binding.btnSimpanPegawai.isEnabled = true }
+        } else {
+            db.child(idEdit).updateChildren(mapOf("namaPegawai" to nama, "role" to role, "noHp" to noHp, "alamat" to alamat))
+                .addOnSuccessListener { binding.progressSimpanPegawai.visibility = View.GONE; Toast.makeText(this, "✅ Pegawai diperbarui!", Toast.LENGTH_SHORT).show(); finish() }
+                .addOnFailureListener { binding.progressSimpanPegawai.visibility = View.GONE; binding.btnSimpanPegawai.isEnabled = true }
         }
-
-        private fun initViews() {
-            tvTitleMod   = findViewById(R.id.tvTitleMod)
-            etNama       = findViewById(R.id.etNamaPegawai)
-            etNoHp       = findViewById(R.id.etNoHpPegawai)
-            etAlamat     = findViewById(R.id.etAlamatPegawai)
-            rgRole       = findViewById(R.id.rgRole)
-            rbAdmin      = findViewById(R.id.rbAdmin)
-            rbKasir      = findViewById(R.id.rbKasir)
-            btnSimpan    = findViewById(R.id.btnSimpanPegawai)
-            btnHapus     = findViewById(R.id.btnHapusPegawai)
-            loadingOverlay = findViewById(R.id.loadingOverlay)
-            btnBack      = findViewById(R.id.btnBack)
-        }
-
-        // ===== CEK MODE EDIT DARI INTENT =====
-        private fun cekModeEdit() {
-            idPegawai = intent.getStringExtra("idPegawai") ?: ""
-            isEditMode = idPegawai.isNotEmpty()
-
-            if (isEditMode) {
-                tvTitleMod.text    = "Edit Pegawai"
-                btnSimpan.text     = "Perbarui Pegawai"
-                btnHapus.visibility = View.VISIBLE
-
-                // Isi form dengan data yang sudah ada
-                etNama.setText(intent.getStringExtra("namaPegawai") ?: "")
-                etNoHp.setText(intent.getStringExtra("noHp") ?: "")
-                etAlamat.setText(intent.getStringExtra("alamat") ?: "")
-
-                val role = intent.getStringExtra("role") ?: "kasir"
-                if (role.lowercase() == "admin") rbAdmin.isChecked = true
-                else rbKasir.isChecked = true
-            }
-        }
-
-        // ===== VALIDASI INPUT =====
-        private fun validasiDanSimpan() {
-            val nama   = etNama.text.toString().trim()
-            val noHp   = etNoHp.text.toString().trim()
-            val alamat = etAlamat.text.toString().trim()
-
-            when {
-                nama.isEmpty()   -> { etNama.error = "Nama wajib diisi"; etNama.requestFocus(); return }
-                noHp.isEmpty()   -> { etNoHp.error = "No HP wajib diisi"; etNoHp.requestFocus(); return }
-                alamat.isEmpty() -> { etAlamat.error = "Alamat wajib diisi"; etAlamat.requestFocus(); return }
-            }
-
-            val role = if (rbAdmin.isChecked) "admin" else "kasir"
-
-            if (isEditMode) updatePegawai(nama, noHp, alamat, role)
-            else            tambahPegawai(nama, noHp, alamat, role)
-        }
-
-        // ===== TAMBAH PEGAWAI BARU =====
-        private fun tambahPegawai(nama: String, noHp: String, alamat: String, role: String) {
-            showLoading(true)
-            val ref = database.getReference("pegawai")
-            val id  = ref.push().key ?: return
-
-            val pegawai = ModelPegawai(
-                idPegawai = id,
-                namaPegawai = nama,
-                role = role,
-                noHp = noHp,
-                alamat = alamat
-            )
-
-            ref.child(id).setValue(pegawai)
-                .addOnSuccessListener {
-                    showLoading(false)
-                    Toast.makeText(this, "✅ Pegawai berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                .addOnFailureListener {
-                    showLoading(false)
-                    Toast.makeText(this, "❌ Gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
-
-        // ===== UPDATE DATA PEGAWAI =====
-        private fun updatePegawai(nama: String, noHp: String, alamat: String, role: String) {
-            showLoading(true)
-            val updates = mapOf(
-                "namaPegawai" to nama,
-                "noHp"        to noHp,
-                "alamat"      to alamat,
-                "role"        to role
-            )
-            database.getReference("pegawai/$idPegawai")
-                .updateChildren(updates)
-                .addOnSuccessListener {
-                    showLoading(false)
-                    Toast.makeText(this, "✅ Data pegawai diperbarui!", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                .addOnFailureListener {
-                    showLoading(false)
-                    Toast.makeText(this, "❌ Gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
-
-        // ===== HAPUS PEGAWAI =====
-        private fun konfirmasiHapus() {
-            AlertDialog.Builder(this)
-                .setTitle("Hapus Pegawai")
-                .setMessage("Yakin ingin menghapus pegawai ini? Data tidak dapat dikembalikan.")
-                .setPositiveButton("Ya, Hapus") { _, _ -> hapusPegawai() }
-                .setNegativeButton("Batal", null)
-                .show()
-        }
-
-        private fun hapusPegawai() {
-            showLoading(true)
-            database.getReference("pegawai/$idPegawai")
-                .removeValue()
-                .addOnSuccessListener {
-                    showLoading(false)
-                    Toast.makeText(this, "✅ Pegawai dihapus!", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                .addOnFailureListener {
-                    showLoading(false)
-                    Toast.makeText(this, "❌ Gagal: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
-
-        private fun showLoading(show: Boolean) {
-            loadingOverlay.visibility = if (show) View.VISIBLE else View.GONE
-        }
+    }
 }
