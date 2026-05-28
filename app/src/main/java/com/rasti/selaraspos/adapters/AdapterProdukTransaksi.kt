@@ -19,7 +19,6 @@ import com.rasti.selaraspos.model.ModelProduk
 import java.text.NumberFormat
 import java.util.Locale
 
-// ─── AdapterProdukTransaksi ──────────────────────────────────────────────────
 
 class AdapterProdukTransaksi(
     private val listProduk: MutableList<ModelProduk>,
@@ -82,14 +81,3 @@ class AdapterProdukTransaksi(
     private fun formatRp(h: Long) = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(h)
 }
 
-// ─── AdapterKeranjang ────────────────────────────────────────────────────────
-
-
-// ─── AdapterLaporan ──────────────────────────────────────────────────────────
-
-
-
-// ─── AdapterPegawai ──────────────────────────────────────────────────────────
-
-
-// ─── AdapterCabang ───────────────────────────────────────────────────────────
