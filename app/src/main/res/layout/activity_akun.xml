@@ -436,7 +436,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/error"
-                app:cornerRadius="50dp"
+                app:cornerRadius="24dp"
                 android:background="@color/surface"
                 app:strokeColor="@color/error"
                 app:strokeWidth="1.5dp" />
