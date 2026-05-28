@@ -1,118 +1,84 @@
 package com.rasti.selaraspos.pegawai
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.widget.*
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.rasti.selaraspos.R
+import com.rasti.selaraspos.adapters.AdapterCabang
 import com.rasti.selaraspos.adapters.AdapterPegawai
+import com.rasti.selaraspos.databinding.ActivityDataCabangBinding
+import com.rasti.selaraspos.databinding.ActivityDataPegawaiBinding
+import com.rasti.selaraspos.databinding.ActivityModCabangBinding
+import com.rasti.selaraspos.databinding.ActivityModPegawaiBinding
+import com.rasti.selaraspos.databinding.ActivityPrinterBinding
+import com.rasti.selaraspos.model.ModelCabang
 import com.rasti.selaraspos.model.ModelPegawai
+import java.io.OutputStream
+import java.util.UUID
 
 class DataPegawaiActivity : AppCompatActivity() {
 
-    private lateinit var rvPegawai: RecyclerView
-    private lateinit var progressBar: ProgressBar
-    private lateinit var layoutEmptyPegawai: LinearLayout
-    private lateinit var etCariPegawai: EditText
-    private lateinit var tvJumlahPegawai: TextView
-    private lateinit var fabTambah: ExtendedFloatingActionButton
-
-    private val listPegawaiOriginal = mutableListOf<ModelPegawai>()
-    private val listPegawaiFilter = mutableListOf<ModelPegawai>()
+    private lateinit var binding: ActivityDataPegawaiBinding
+    private val db = FirebaseDatabase.getInstance().reference.child("pegawai")
+    private val list = mutableListOf<ModelPegawai>()
     private lateinit var adapter: AdapterPegawai
-
-    private val database = FirebaseDatabase.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_data_pegawai)
+        binding = ActivityDataPegawaiBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        rvPegawai = findViewById(R.id.rvPegawai)
-        progressBar = findViewById(R.id.progressBar)
-        layoutEmptyPegawai = findViewById(R.id.layoutEmptyPegawai)
-        etCariPegawai = findViewById(R.id.etCariPegawai)
-        tvJumlahPegawai = findViewById(R.id.tvJumlahPegawai)
-        fabTambah = findViewById(R.id.fabTambahPegawai)
-
-        setupAdapter()
-        setupSearch()
-        loadPegawai()
-
-        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
-        fabTambah.setOnClickListener {
-            startActivity(Intent(this, ModPegawaiActivity::class.java))
-        }
-    }
-
-    private fun setupAdapter() {
-        // PERBAIKAN: Mengirim 3 parameter yang diminta oleh AdapterPegawai
-        adapter = AdapterPegawai(
-            listPegawaiFilter,
-            onEditClick = { pegawai ->
-                val intent = Intent(this, ModPegawaiActivity::class.java).apply {
-                    putExtra("idPegawai", pegawai.idPegawai)
-                    putExtra("namaPegawai", pegawai.namaPegawai)
-                    putExtra("noHp", pegawai.noHp)
-                    putExtra("alamat", pegawai.alamat)
-                    putExtra("role", pegawai.role)
-                }
-                startActivity(intent)
+        adapter = AdapterPegawai(list,
+            onEdit = { p ->
+                // Perbaikan di sini: Hapus "com.rasti.selaraspos.activities."
+                startActivity(Intent(this, ModPegawaiActivity::class.java).apply {
+                    putExtra("MODE", "EDIT")
+                    putExtra("ID_PEGAWAI", p.idPegawai)
+                    putExtra("NAMA_PEGAWAI", p.namaPegawai)
+                    putExtra("ROLE", p.role)
+                    putExtra("NO_HP", p.noHp)
+                    putExtra("ALAMAT", p.alamat)
+                    putExtra("EMAIL", p.email)
+                })
             },
-            onHapusClick = { pegawai ->
-                // Tambahkan logika hapus jika diperlukan
-                Toast.makeText(this, "Hapus data: ${pegawai.namaPegawai}", Toast.LENGTH_SHORT).show()
+            onHapus = { p ->
+                AlertDialog.Builder(this).setTitle("Hapus Pegawai")
+                    .setMessage("Yakin hapus \"${p.namaPegawai}\"?")
+                    .setPositiveButton("Hapus") { _, _ -> db.child(p.idPegawai).removeValue() }
+                    .setNegativeButton("Batal", null).show()
             }
         )
-        rvPegawai.layoutManager = LinearLayoutManager(this)
-        rvPegawai.adapter = adapter
-    }
+        binding.rvPegawai.layoutManager = LinearLayoutManager(this)
+        binding.rvPegawai.adapter = adapter
 
-    private fun setupSearch() {
-        etCariPegawai.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                adapter.filter(s.toString(), listPegawaiOriginal)
-                updateEmptyState()
+        db.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = mutableListOf<ModelPegawai>()
+                for (snap in snapshot.children) {
+                    snap.getValue(ModelPegawai::class.java)?.let { data.add(it) }
+                }
+                binding.progressPegawai.visibility = View.GONE
+                binding.tvEmptyPegawai.visibility = if (data.isEmpty()) View.VISIBLE else View.GONE
+                adapter.updateData(data)
             }
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onCancelled(e: DatabaseError) {}
         })
-    }
 
-    private fun loadPegawai() {
-        progressBar.visibility = View.VISIBLE
-        database.getReference("pegawai")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    listPegawaiOriginal.clear()
-                    for (data in snapshot.children) {
-                        val pegawai = data.getValue(ModelPegawai::class.java)
-                        if (pegawai != null) {
-                            listPegawaiOriginal.add(pegawai)
-                        }
-                    }
-                    adapter.updateData(listPegawaiOriginal)
-                    tvJumlahPegawai.text = "${listPegawaiOriginal.size} pegawai"
-                    progressBar.visibility = View.GONE
-                    updateEmptyState()
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    progressBar.visibility = View.GONE
-                    Toast.makeText(this@DataPegawaiActivity, "Gagal: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
-    }
-
-    private fun updateEmptyState() {
-        val empty = adapter.itemCount == 0
-        layoutEmptyPegawai.visibility = if (empty) View.VISIBLE else View.GONE
-        rvPegawai.visibility = if (empty) View.GONE else View.VISIBLE
+        binding.fabTambahPegawai.setOnClickListener {
+            startActivity(Intent(this, ModPegawaiActivity::class.java))
+        }
+        binding.btnKembali.setOnClickListener { finish() }
     }
 }
