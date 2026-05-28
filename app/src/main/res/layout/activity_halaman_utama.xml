@@ -183,13 +183,14 @@
                 android:textColor="@color/text_primary"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Baris 0: Produk & Kategori (BARU DITAMBAHKAN) -->
+            <!-- Baris 0: Produk, Kategori, Pelanggan (3 kolom) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="12dp">
 
+                <!-- Card Produk -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardProduk"
                     android:layout_width="0dp"
@@ -222,12 +223,13 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- Card Kategori -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardKategori"
                     android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginHorizontal="6dp"
                     android:clickable="true"
                     android:focusable="true"
                     app:cardCornerRadius="16dp"
@@ -253,6 +255,40 @@
                             android:layout_marginTop="6dp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card Pelanggan (BARU) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPelanggan"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="12dp">
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/pelanggan" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pelanggan"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/text_primary"
+                            android:layout_marginTop="6dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
             <!-- Baris 1: Transaksi, Laporan, Akun -->
@@ -462,6 +498,7 @@
                             android:layout_marginTop="6dp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
             <!-- Section Transaksi Terbaru -->
@@ -474,16 +511,14 @@
                 android:textColor="@color/text_primary"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Card Kosong untuk Transaksi Terbaru -->
+            <!-- RecyclerView Transaksi Terbaru -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTransaksiTerbaru"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@color/surface"
                 android:layout_marginBottom="16dp"/>
 
+            <!-- Card Kosong Transaksi -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardKosongTransaksi"
                 android:layout_width="match_parent"
@@ -520,7 +555,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Navigation Bar Mengambang dengan warna Surface Variant -->
+    <!-- Bottom Navigation Bar -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardBottomNav"
         android:layout_width="0dp"
