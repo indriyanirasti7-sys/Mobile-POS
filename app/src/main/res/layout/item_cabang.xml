@@ -126,13 +126,27 @@
         </LinearLayout>
 
         <!-- Edit button -->
-        <ImageButton
+        <TextView
             android:id="@+id/btnEditCabangItem"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/bg_icon_circle"
-            android:src="@android:drawable/ic_menu_edit"
-            android:tint="@color/primary_dark"
-            android:contentDescription="Edit" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:textSize="14sp"
+            android:textColor="@color/primary"
+            android:padding="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+
+        <TextView
+            android:id="@+id/btnHapusCabangItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hapus"
+            android:textSize="14sp"
+            android:textColor="@color/error"
+            android:padding="8dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

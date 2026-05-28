@@ -17,6 +17,7 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
+        <!-- Icon Kategori -->
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -25,6 +26,7 @@
             android:background="@drawable/bg_gradient_header"
             app:tint="@color/text_on_primary" />
 
+        <!-- Nama Kategori -->
         <TextView
             android:id="@+id/tvNamaKategori"
             android:layout_width="0dp"
@@ -36,26 +38,37 @@
             android:textColor="@color/text_primary"
             android:layout_marginStart="14dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEditKategori"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="70dp"
-            android:layout_height="36dp"
-            android:text="Edit"
-            android:textSize="12sp"
-            android:layout_marginEnd="6dp"
-            android:textColor="@color/primary"
-            app:strokeColor="@color/primary"
-            app:cornerRadius="8dp" />
+        <!-- Layout Aksi untuk Edit dan Hapus (dibungkus agar bisa disembunyikan jika bukan admin) -->
+        <LinearLayout
+            android:id="@+id/layoutAksiKategori"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHapusKategori"
-            android:layout_width="85dp"
-            android:layout_height="36dp"
-            android:text="Hapus"
-            android:textSize="12sp"
-            android:textColor="@color/text_on_primary"
-            app:backgroundTint="@color/error"
-            app:cornerRadius="8dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditKategori"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="70dp"
+                android:layout_height="36dp"
+                android:text="Edit"
+                android:textSize="12sp"
+                android:layout_marginEnd="6dp"
+                android:textColor="@color/primary"
+                app:strokeColor="@color/primary"
+                app:cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHapusKategori"
+                android:layout_width="85dp"
+                android:layout_height="36dp"
+                android:text="Hapus"
+                android:textSize="12sp"
+                android:textColor="@color/text_on_primary"
+                app:backgroundTint="@color/error"
+                app:cornerRadius="8dp" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
