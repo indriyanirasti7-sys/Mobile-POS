@@ -27,7 +27,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:theme="@style/Theme.SelarasPOS">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,100 +39,100 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== HALAMAN UTAMA (DASHBOARD) ===== -->
         <activity
             android:name=".Halaman_Utama"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== TRANSAKSI ===== -->
         <activity
             android:name=".activities.TransaksiActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== LAPORAN ===== -->
         <activity
             android:name=".activities.LaporanActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== AKUN ===== -->
         <activity
             android:name=".activities.AkunActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== PEGAWAI ===== -->
         <activity
             android:name=".pegawai.DataPegawaiActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".pegawai.ModPegawaiActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== CABANG ===== -->
         <activity
             android:name=".cabang.DataCabangActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".cabang.ModCabangActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== PRODUK ===== -->
         <activity
             android:name=".produk.DataProdukActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".produk.ModProdukActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== KATEGORI ===== -->
         <activity
             android:name=".kategori.DataKategoriActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".kategori.ModKategoriActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- ===== PRINTER ===== -->
         <activity
             android:name=".activities.PrinterActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="sensor" />
 
     </application>
 
