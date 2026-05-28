@@ -2,128 +2,90 @@ package com.rasti.selaraspos
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import android.widget.FrameLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.rasti.selaraspos.activities.AkunActivity
 import com.rasti.selaraspos.activities.LaporanActivity
+import com.rasti.selaraspos.activities.AkunActivity
 import com.rasti.selaraspos.activities.PrinterActivity
 import com.rasti.selaraspos.activities.TransaksiActivity
 import com.rasti.selaraspos.cabang.DataCabangActivity
 import com.rasti.selaraspos.kategori.DataKategoriActivity
 import com.rasti.selaraspos.pegawai.DataPegawaiActivity
 import com.rasti.selaraspos.produk.DataProdukActivity
-import java.text.SimpleDateFormat
-import java.util.*
 
+/**
+ * Halaman Utama / Dashboard
+ * Menampilkan menu navigasi dan statistik singkat
+ */
 class Halaman_Utama : AppCompatActivity() {
 
-    // ===== VIEW BINDING manual =====
-    private lateinit var tvGreeting: TextView
-    private lateinit var tvNamaPengguna: TextView
+    // Menggunakan findViewById (cara lama, tidak perlu binding)
+    private lateinit var tvSapaUser: TextView
     private lateinit var tvTotalTransaksi: TextView
     private lateinit var tvTotalProduk: TextView
     private lateinit var tvTotalPegawai: TextView
-    private lateinit var loadingOverlay: FrameLayout
 
-    // Menu cards
-    private lateinit var cardTransaksi: CardView
-    private lateinit var cardLaporan: CardView
-    private lateinit var cardAkun: CardView
-    private lateinit var cardPegawai: CardView
-    private lateinit var cardCabang: CardView
-    private lateinit var cardPrinter: CardView
-
-    // ===== BOTTOM NAVIGATION =====
-    private lateinit var bottomNavigation: BottomNavigationView
-
-    // Firebase
-    private val database = FirebaseDatabase.getInstance()
-    private var idKasir = ""
+    private val db = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_halaman_utama)
+        setContentView(R.layout.activity_halaman_utama) // Pastikan nama XML sesuai
 
-        // Ambil ID Kasir dari SharedPreferences
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        idKasir = prefs.getString("idKasir", "") ?: ""
-
+        // Inisialisasi views dengan findViewById
         initViews()
-        setNamaUser()
-        loadStatistik()
-        setupMenuClick()
-        setupBottomNavigation()
+
+        // Muat data
+        tampilkanSapaUser()
+        muatStatistik()
+        aturNavigasiMenu()
+        aturBottomNav()
     }
 
-    // ===== INISIALISASI VIEW =====
+    /**
+     * Inisialisasi semua View menggunakan findViewById
+     */
     private fun initViews() {
-        tvGreeting = findViewById(R.id.tvGreeting)
-        tvNamaPengguna = findViewById(R.id.tvNamaPengguna)
+        tvSapaUser = findViewById(R.id.tvSapaUser)
         tvTotalTransaksi = findViewById(R.id.tvTotalTransaksi)
         tvTotalProduk = findViewById(R.id.tvTotalProduk)
         tvTotalPegawai = findViewById(R.id.tvTotalPegawai)
-        loadingOverlay = findViewById(R.id.loadingOverlay)
-        cardTransaksi = findViewById(R.id.cardTransaksi)
-        cardLaporan = findViewById(R.id.cardLaporan)
-        cardAkun = findViewById(R.id.cardAkun)
-        cardPegawai = findViewById(R.id.cardPegawai)
-        cardCabang = findViewById(R.id.cardCabang)
-        cardPrinter = findViewById(R.id.cardPrinter)
-
-        // Init Bottom Navigation
-        bottomNavigation = findViewById(R.id.bottomNavigation)
     }
 
-    // ===== TAMPILKAN NAMA USER DARI SHAREDPREFERENCES =====
-    private fun setNamaUser() {
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val namaLokal = prefs.getString("namaKasir", "Pengguna")
-        tvNamaPengguna.text = namaLokal
+    /**
+     * Tampilkan sapaan user (tanpa auth, pakai nama default)
+     */
+    private fun tampilkanSapaUser() {
+        // Karena tidak pakai auth, kita set nama default
+        // Bisa juga ambil dari SharedPreferences atau Intent
+        tvSapaUser.text = "Halo, Pengguna 👋"
     }
 
-    // ===== LOAD STATISTIK DARI FIREBASE =====
-    private fun loadStatistik() {
-        showLoading(true)
-
-        val hariIni = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-        // Load Total Transaksi Hari Ini
-        database.getReference("transaksi")
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    var countTransaksi = 0L
-                    for (item in snapshot.children) {
-                        val tanggal = item.child("tanggal").getValue(String::class.java) ?: ""
-                        if (tanggal.startsWith(hariIni)) countTransaksi++
-                    }
-                    tvTotalTransaksi.text = countTransaksi.toString()
-                    showLoading(false)
-                }
-                override fun onCancelled(error: DatabaseError) {
-                    showLoading(false)
-                }
-            })
-
-        // Load Total Produk
-        database.getReference("produk").addListenerForSingleValueEvent(object : ValueEventListener {
+    /**
+     * Muat data statistik: total transaksi, produk, pegawai
+     */
+    private fun muatStatistik() {
+        // Total produk
+        db.child("produk").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tvTotalProduk.text = snapshot.childrenCount.toString()
             }
             override fun onCancelled(error: DatabaseError) {}
         })
 
-        // Load Total Pegawai
-        database.getReference("pegawai").addListenerForSingleValueEvent(object : ValueEventListener {
+        // Total transaksi
+        db.child("transaksi").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                tvTotalTransaksi.text = snapshot.childrenCount.toString()
+            }
+            override fun onCancelled(error: DatabaseError) {}
+        })
+
+        // Total pegawai
+        db.child("pegawai").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 tvTotalPegawai.text = snapshot.childrenCount.toString()
             }
@@ -131,64 +93,51 @@ class Halaman_Utama : AppCompatActivity() {
         })
     }
 
-    // ===== SETUP CLICK MENU GRID =====
-    private fun setupMenuClick() {
-        cardTransaksi.setOnClickListener {
+    /**
+     * Atur navigasi untuk setiap card menu di dashboard
+     */
+    private fun aturNavigasiMenu() {
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardProduk).setOnClickListener {
+            startActivity(Intent(this, DataProdukActivity::class.java))
+        }
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardKategori).setOnClickListener {
+            startActivity(Intent(this, DataKategoriActivity::class.java))
+        }
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardTransaksi).setOnClickListener {
             startActivity(Intent(this, TransaksiActivity::class.java))
         }
-        cardLaporan.setOnClickListener {
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardLaporan).setOnClickListener {
             startActivity(Intent(this, LaporanActivity::class.java))
         }
-        cardAkun.setOnClickListener {
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardAkun).setOnClickListener {
             startActivity(Intent(this, AkunActivity::class.java))
         }
-        cardPegawai.setOnClickListener {
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardPegawai).setOnClickListener {
             startActivity(Intent(this, DataPegawaiActivity::class.java))
         }
-        cardCabang.setOnClickListener {
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardCabang).setOnClickListener {
             startActivity(Intent(this, DataCabangActivity::class.java))
         }
-        cardPrinter.setOnClickListener {
+        findViewById<com.google.android.material.card.MaterialCardView>(R.id.cardPrinter).setOnClickListener {
             startActivity(Intent(this, PrinterActivity::class.java))
         }
     }
 
-    // ===== SETUP BOTTOM NAVIGATION =====
-    private fun setupBottomNavigation() {
-        // Set item yang aktif ke Beranda
-        bottomNavigation.selectedItemId = R.id.nav_beranda
-
-        bottomNavigation.setOnItemSelectedListener { menuItem: MenuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_beranda -> {
-                    // Sudah di halaman beranda
-                    true
-                }
-                R.id.nav_produk -> {
-                    // Langsung panggil DataProdukActivity
-                    startActivity(Intent(this, DataProdukActivity::class.java))
-                    true
-                }
-                R.id.nav_kategori -> {
-                    // Langsung panggil DataKategoriActivity
-                    startActivity(Intent(this, DataKategoriActivity::class.java))
-                    true
-                }
-                R.id.nav_transaksi -> {
-                    startActivity(Intent(this, TransaksiActivity::class.java))
-                    true
-                }
-                R.id.nav_akun -> {
-                    startActivity(Intent(this, AkunActivity::class.java))
-                    true
-                }
-                else -> false
-            }
+    /**
+     * Atur navigasi Bottom Navigation Bar
+     */
+    private fun aturBottomNav() {
+        findViewById<android.widget.LinearLayout>(R.id.navBeranda).setOnClickListener {
+            // Sudah di beranda
         }
-    }
-
-    // ===== SHOW LOADING OVERLAY =====
-    private fun showLoading(show: Boolean) {
-        loadingOverlay.visibility = if (show) View.VISIBLE else View.GONE
+        findViewById<android.widget.LinearLayout>(R.id.navTransaksi).setOnClickListener {
+            startActivity(Intent(this, TransaksiActivity::class.java))
+        }
+        findViewById<android.widget.LinearLayout>(R.id.navLaporan).setOnClickListener {
+            startActivity(Intent(this, LaporanActivity::class.java))
+        }
+        findViewById<android.widget.LinearLayout>(R.id.navAkun).setOnClickListener {
+            startActivity(Intent(this, AkunActivity::class.java))
+        }
     }
 }

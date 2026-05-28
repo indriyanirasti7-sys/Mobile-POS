@@ -1,12 +1,12 @@
 package com.rasti.selaraspos.model
 
-data class ModelAkun (
+/**
+ * Model data untuk Akun Pengguna
+ */
+data class ModelAkun(
     var uid: String = "",
-    var namaPengguna: String = "",
+    var namaUser: String = "",
     var email: String = "",
-    var role: String = "",     // admin / kasir
-    var fotoProfil: String = "", // URL Firebase Storage
-    var idCabang: String = ""
-
-
+    var role: String = "kasir",   // "admin" atau "kasir"
+    var fotoProfil: String = ""
 )

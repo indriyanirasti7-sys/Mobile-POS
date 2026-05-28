@@ -1,18 +1,14 @@
 package com.rasti.selaraspos.model
 
-import com.rasti.selaraspos.model.ModelDetailTransaksi
-
-data class ModelTransaksi (
+data class ModelTransaksi(
     var idTransaksi: String = "",
     var tanggal: String = "",
-    var tanggalMilis: Long = 0L,       // untuk sorting & filter
-    var total: Long = 0L,
-    var metodePembayaran: String = "", // Cash / QRIS / Transfer
+    var total: Long = 0,
+    var metodePembayaran: String = "",
+    var uangBayar: Long = 0,
+    var kembalian: Long = 0,
     var namaKasir: String = "",
-    var idKasir: String = "",
     var cabang: String = "",
-    var idCabang: String = "",
+    // Ini sekarang akan terbaca karena file ModelDetailTransaksi sudah ada
     var detailProduk: Map<String, ModelDetailTransaksi> = emptyMap()
-
 )
-

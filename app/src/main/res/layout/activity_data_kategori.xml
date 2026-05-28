@@ -1,140 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- activity_data_kategori.xml -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".kategori.DataKategoriActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/background_light">
 
-    <!-- Header dengan Search Bar -->
     <LinearLayout
-        android:id="@+id/headerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:id="@+id/toolbarKategori"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:background="@color/primary"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-
-        <!-- Baris pertama: Tombol Back dan Judul -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/btnKembali"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/kembali"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/text_on_primary" />
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/kembali"
-                android:layout_marginEnd="16dp"
-                app:tint="#000000" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Kategori"
-                android:textSize="22sp"
-                android:textColor="#000000"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Baris kedua: Search Bar dan Icon Filter -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <!-- Search Bar -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="#F5F5F5">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="12dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/search"
-                        android:tint="#999999" />
-
-                    <EditText
-                        android:id="@+id/etSearchKategori"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="12dp"
-                        android:hint="Cari kategori..."
-                        android:textSize="14sp"
-                        android:background="@null"
-                        android:textColor="#000000"
-                        android:textColorHint="#999999" />
-
-                    <ImageView
-                        android:id="@+id/ivClearSearch"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/kembali"
-                        android:visibility="gone"
-                        android:tint="#999999" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-
-        </LinearLayout>
+            android:text="Data Kategori"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_primary"
+            android:layout_marginStart="8dp" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/tvDataKategoriKosong"
+
+    <ProgressBar
+        android:id="@+id/progressKategori"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Belum ada data kategori"
-        android:textSize="16sp"
-        android:textColor="#999999"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarKategori"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:id="@+id/tvEmptyKategori"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Belum ada kategori"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/toolbarKategori"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvKategori"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_data_kategori"
+        app:layout_constraintTop_toBottomOf="@id/toolbarKategori"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- RecyclerView untuk daftar kategori -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvKategori"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        tools:listitem="@layout/item_data_kategori"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <!-- FloatingActionButton untuk tambah kategori -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fabTambahKategori"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/tambah"
-        app:backgroundTint="@color/white_pink"
-        android:layout_margin="24dp"
+        android:text="Tambah Kategori"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:backgroundTint="@color/primary"
+        android:textColor="@color/text_on_primary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="Tambah Kategori"/>
-
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

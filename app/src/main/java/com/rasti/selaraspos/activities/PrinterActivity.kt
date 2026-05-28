@@ -165,7 +165,7 @@ import java.util.UUID
                 }
 
                 if (sukses) {
-                    printerTerhubung = printer.copy(statusTerhubung = true)
+                    printerTerhubung = printer.copy(statusKoneksi = true)
                     updateStatusUI(true, printer.namaPrinter)
                     Toast.makeText(this@PrinterActivity, "✅ Terhubung ke ${printer.namaPrinter}", Toast.LENGTH_SHORT).show()
                 } else {

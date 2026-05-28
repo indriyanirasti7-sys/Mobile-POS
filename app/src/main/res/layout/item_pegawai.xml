@@ -1,125 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackgroundBorderless"
-    app:cardBackgroundColor="@color/surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:strokeColor="@color/border"
-    app:strokeWidth="1dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="3dp"
+    app:cardBackgroundColor="@color/surface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="14dp">
+        android:padding="14dp"
+        android:gravity="center_vertical">
 
-        <!-- Avatar -->
-        <FrameLayout
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_avatar">
-
-            <TextView
-                android:id="@+id/tvInisialPegawai"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="A"
-                android:textColor="@color/primary_dark"
-                android:textSize="18sp"
-                android:fontFamily="sans-serif-bold" />
-        </FrameLayout>
-
-        <!-- Info -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvNamaPegawaiItem"
+                android:id="@+id/tvNamaPegawai"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nama Pegawai"
-                android:textColor="@color/text_primary"
                 android:textSize="15sp"
-                android:fontFamily="sans-serif-medium" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:src="@android:drawable/sym_action_call"
-                    android:backgroundTint="@color/text_hint" />
-
-                <TextView
-                    android:id="@+id/tvNoHpItem"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="08xxxxxxxxxx"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                android:textStyle="bold"
+                android:textColor="@color/text_primary" />
 
             <TextView
-                android:id="@+id/tvAlamatItem"
+                android:id="@+id/tvRolePegawai"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Kasir"
+                android:textSize="12sp"
+                android:textColor="@color/primary"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvHpPegawai"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="08xx-xxxx-xxxx"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvAlamatPegawai"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alamat"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
                 android:layout_marginTop="2dp"
-                android:ellipsize="end"
                 android:maxLines="1"
-                android:text="Alamat pegawai"
-                android:textColor="@color/text_hint"
-                android:textSize="11sp" />
+                android:ellipsize="end" />
         </LinearLayout>
 
-        <!-- Role badge + Edit btn -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center|end"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvRoleItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_tab_selected"
-                android:paddingStart="10dp"
-                android:paddingTop="3dp"
-                android:paddingEnd="10dp"
-                android:paddingBottom="3dp"
-                android:text="Admin"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                android:fontFamily="sans-serif-medium" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditPegawai"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="80dp"
+                android:layout_height="36dp"
+                android:text="Edit"
+                android:textSize="12sp"
+                android:textColor="@color/primary"
+                app:strokeColor="@color/primary"
+                app:cornerRadius="8dp" />
 
-            <ImageButton
-                android:id="@+id/btnEditPegawaiItem"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_icon_circle"
-                android:src="@android:drawable/ic_menu_edit"
-                android:backgroundTint="@color/primary_dark"
-                android:contentDescription="Edit" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHapusPegawai"
+                android:layout_width="80dp"
+                android:layout_height="36dp"
+                android:text="Hapus"
+                android:textSize="12sp"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/text_on_primary"
+                app:backgroundTint="@color/error"
+                app:cornerRadius="8dp" />
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

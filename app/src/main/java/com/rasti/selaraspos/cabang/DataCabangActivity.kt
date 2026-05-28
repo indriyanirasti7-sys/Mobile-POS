@@ -75,7 +75,7 @@ import com.rasti.selaraspos.model.ModelCabang
                     putExtra("namaCabang", cabang.namaCabang)
                     putExtra("alamatCabang", cabang.alamatCabang)
                     putExtra("teleponCabang", cabang.teleponCabang)
-                    putExtra("penanggungJawab", cabang.penanggungJawab)
+                    putExtra("penanggungJawab", cabang.penanggungjawab)
                 }
                 startActivity(intent)
             }

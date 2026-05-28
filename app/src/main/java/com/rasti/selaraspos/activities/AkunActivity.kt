@@ -62,10 +62,10 @@ class AkunActivity : AppCompatActivity() {
                     val akun = snapshot.getValue(ModelAkun::class.java) ?: return
                     modelAkun = akun
 
-                    tvNamaPenggunaProfil.text = akun.namaPengguna
+                    tvNamaPenggunaProfil.text = akun.namaUser
                     tvRoleBadge.text = akun.role.replaceFirstChar { it.uppercase() }
                     tvEmailProfil.text = akun.email.ifEmpty { "–" }
-                    tvInfoNama.text = akun.namaPengguna.ifEmpty { "–" }
+                    tvInfoNama.text = akun.namaUser.ifEmpty { "–" }
                     tvInfoEmail.text = akun.email.ifEmpty { "–" }
                     tvInfoRole.text = akun.role.replaceFirstChar { it.uppercase() }.ifEmpty { "–" }
                 }

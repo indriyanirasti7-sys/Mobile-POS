@@ -1,268 +1,169 @@
 package com.rasti.selaraspos.activities
 
-import android.app.DatePickerDialog
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.Spinner
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.rasti.selaraspos.model.ModelCabang
-import com.rasti.selaraspos.model.ModelLaporan
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.firebase.database.*
 import com.rasti.selaraspos.R
-import com.rasti.selaraspos.adapters.AdapterLaporan
+import com.selaraspos.adapter.AdapterLaporan
+import com.rasti.selaraspos.model.ModelLaporan
+import com.rasti.selaraspos.model.ModelTransaksi
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-
-
+import java.util.*
 
 class LaporanActivity : AppCompatActivity() {
 
-        private lateinit var rvLaporan: RecyclerView
-        private lateinit var progressBar: ProgressBar
-        private lateinit var layoutEmptyLaporan: LinearLayout
-        private lateinit var tvSummaryTotalTransaksi: TextView
-        private lateinit var tvSummaryTotalPenjualan: TextView
-        private lateinit var btnHarian: Button
-        private lateinit var btnMingguan: Button
-        private lateinit var btnBulanan: Button
-        private lateinit var tvFilterTanggal: TextView
-        private lateinit var spinnerFilterCabang: Spinner
-        private lateinit var layoutFilterTanggal: LinearLayout
+    // Komponen UI
+    private lateinit var rvLaporan: RecyclerView
+    private lateinit var actvFilterCabang: MaterialAutoCompleteTextView
+    private lateinit var btnHarian: MaterialButton
+    private lateinit var btnMingguan: MaterialButton
+    private lateinit var btnBulanan: MaterialButton
+    private lateinit var btnKembali: ImageButton
+    private lateinit var tvEmptyLaporan: TextView
+    private lateinit var tvTotalPemasukan: TextView
+    private lateinit var tvTotalTrxLaporan: TextView
+    private lateinit var progressLaporan: ProgressBar
 
-        private val listLaporanOriginal = mutableListOf<ModelLaporan>()
-        private val listLaporanFilter   = mutableListOf<ModelLaporan>()
-        private val listCabang          = mutableListOf<ModelCabang>()
-        private lateinit var adapterLaporan: AdapterLaporan
+    private val db = FirebaseDatabase.getInstance().reference.child("transaksi")
+    private val listLaporan = mutableListOf<ModelLaporan>()
+    private lateinit var adapter: AdapterLaporan
 
-        private val database = FirebaseDatabase.getInstance()
+    private var filterMode = "HARIAN"
+    private var cabangFilter = "Semua"
 
-        // State filter
-        private var filterMode     = "harian"  // harian / mingguan / bulanan
-        private var filterTanggal  = ""        // "" = semua
-        private var filterCabang   = ""        // "" = semua
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_laporan)
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.activity_laporan)
+        initViews()
+        setupRecyclerView()
+        muatCabang()
+        aturFilter()
+        muatLaporan()
 
-            initViews()
-            setupAdapter()
-            setupTabButtons()
-            setupFilterTanggal()
-            loadCabang()
-            loadLaporan()
+        btnKembali.setOnClickListener { finish() }
+    }
 
-            findViewById<ImageButton>(R.id.btnBack).setOnClickListener { finish() }
-        }
+    private fun initViews() {
+        rvLaporan = findViewById(R.id.rvLaporan)
+        actvFilterCabang = findViewById(R.id.actvFilterCabang)
+        btnHarian = findViewById(R.id.btnHarian)
+        btnMingguan = findViewById(R.id.btnMingguan)
+        btnBulanan = findViewById(R.id.btnBulanan)
+        btnKembali = findViewById(R.id.btnKembali)
+        tvEmptyLaporan = findViewById(R.id.tvEmptyLaporan)
+        tvTotalPemasukan = findViewById(R.id.tvTotalPemasukan)
+        tvTotalTrxLaporan = findViewById(R.id.tvTotalTrxLaporan)
+        progressLaporan = findViewById(R.id.progressLaporan)
+    }
 
-        private fun initViews() {
-            rvLaporan                 = findViewById(R.id.rvLaporan)
-            progressBar               = findViewById(R.id.progressBar)
-            layoutEmptyLaporan        = findViewById(R.id.layoutEmptyLaporan)
-            tvSummaryTotalTransaksi   = findViewById(R.id.tvSummaryTotalTransaksi)
-            tvSummaryTotalPenjualan   = findViewById(R.id.tvSummaryTotalPenjualan)
-            btnHarian                 = findViewById(R.id.btnHarian)
-            btnMingguan               = findViewById(R.id.btnMingguan)
-            btnBulanan                = findViewById(R.id.btnBulanan)
-            tvFilterTanggal           = findViewById(R.id.tvFilterTanggal)
-            spinnerFilterCabang       = findViewById(R.id.spinnerFilterCabang)
-            layoutFilterTanggal       = findViewById(R.id.layoutFilterTanggal)
-        }
+    private fun setupRecyclerView() {
+        adapter = AdapterLaporan(listLaporan)
+        rvLaporan.layoutManager = LinearLayoutManager(this)
+        rvLaporan.adapter = adapter
+    }
 
-        private fun setupAdapter() {
-            adapterLaporan = AdapterLaporan(listLaporanFilter)
-            rvLaporan.layoutManager = LinearLayoutManager(this)
-            rvLaporan.adapter = adapterLaporan
-        }
+    private fun muatCabang() {
+        FirebaseDatabase.getInstance().reference.child("cabang")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val listCabang = mutableListOf("Semua")
+                    for (snap in snapshot.children) {
+                        snap.child("namaCabang").getValue(String::class.java)?.let { listCabang.add(it) }
+                    }
+                    val adp = ArrayAdapter(this@LaporanActivity, android.R.layout.simple_dropdown_item_1line, listCabang)
+                    actvFilterCabang.setAdapter(adp)
+                    actvFilterCabang.setText("Semua", false)
+                    actvFilterCabang.setOnItemClickListener { _, _, position, _ ->
+                        cabangFilter = listCabang[position]
+                        muatLaporan()
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            })
+    }
 
-        // ===== SETUP TAB BUTTONS =====
-        private fun setupTabButtons() {
-            btnHarian.setOnClickListener {
-                filterMode = "harian"
-                updateTabUI()
-                terapkanFilter()
+    private fun aturFilter() {
+        val listener = View.OnClickListener { v ->
+            filterMode = when (v.id) {
+                R.id.btnHarian -> "HARIAN"
+                R.id.btnMingguan -> "MINGGUAN"
+                else -> "BULANAN"
             }
-            btnMingguan.setOnClickListener {
-                filterMode = "mingguan"
-                updateTabUI()
-                terapkanFilter()
-            }
-            btnBulanan.setOnClickListener {
-                filterMode = "bulanan"
-                updateTabUI()
-                terapkanFilter()
-            }
+            highlightFilter()
+            muatLaporan()
         }
+        btnHarian.setOnClickListener(listener)
+        btnMingguan.setOnClickListener(listener)
+        btnBulanan.setOnClickListener(listener)
+        highlightFilter()
+    }
 
-        private fun updateTabUI() {
-            val selected   = R.drawable.bg_tab_selected
-            val unselected = R.drawable.bg_tab_unselected
-            btnHarian.setBackgroundResource(if (filterMode == "harian") selected else unselected)
-            btnMingguan.setBackgroundResource(if (filterMode == "mingguan") selected else unselected)
-            btnBulanan.setBackgroundResource(if (filterMode == "bulanan") selected else unselected)
-            btnHarian.setTextColor(getColor(if (filterMode == "harian") R.color.white else R.color.text_secondary))
-            btnMingguan.setTextColor(getColor(if (filterMode == "mingguan") R.color.white else R.color.text_secondary))
-            btnBulanan.setTextColor(getColor(if (filterMode == "bulanan") R.color.white else R.color.text_secondary))
+    private fun highlightFilter() {
+        val primary = ContextCompat.getColor(this, R.color.primary)
+        val variant = ContextCompat.getColor(this, R.color.surface_variant)
+        val onPrimary = ContextCompat.getColor(this, R.color.text_on_primary)
+        val onSurface = ContextCompat.getColor(this, R.color.text_primary)
+
+        val buttons = listOf(btnHarian, btnMingguan, btnBulanan)
+        val modes = listOf("HARIAN", "MINGGUAN", "BULANAN")
+
+        buttons.forEachIndexed { index, btn ->
+            val isActive = modes[index] == filterMode
+            btn.backgroundTintList = ColorStateList.valueOf(if (isActive) primary else variant)
+            btn.setTextColor(if (isActive) onPrimary else onSurface)
         }
+    }
 
-        // ===== FILTER TANGGAL MANUAL =====
-        private fun setupFilterTanggal() {
-            layoutFilterTanggal.setOnClickListener {
-                val cal = Calendar.getInstance()
-                DatePickerDialog(
-                    this,
-                    { _, year, month, day ->
-                        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        cal.set(year, month, day)
-                        filterTanggal = sdf.format(cal.time)
-                        val display = SimpleDateFormat("dd MMM yyyy", Locale("id")).format(cal.time)
-                        tvFilterTanggal.text = display
-                        terapkanFilter()
-                    },
-                    cal.get(Calendar.YEAR),
-                    cal.get(Calendar.MONTH),
-                    cal.get(Calendar.DAY_OF_MONTH)
-                ).show()
-            }
-        }
+    private fun muatLaporan() {
+        progressLaporan.visibility = View.VISIBLE
+        db.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val filtered = snapshot.children.mapNotNull { it.getValue(ModelTransaksi::class.java) }
+                    .filter { cekTanggal(it.tanggal) && (cabangFilter == "Semua" || it.cabang == cabangFilter) }
 
-        // ===== LOAD CABANG UNTUK FILTER =====
-        private fun loadCabang() {
-            database.getReference("cabang")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        listCabang.clear()
-                        val items = mutableListOf("Semua Cabang")
-                        for (data in snapshot.children) {
-                            val cabang = data.getValue(ModelCabang::class.java) ?: continue
-                            listCabang.add(cabang)
-                            items.add(cabang.namaCabang)
-                        }
-                        val spinnerAdapter = ArrayAdapter(
-                            this@LaporanActivity,
-                            android.R.layout.simple_spinner_item, items
-                        )
-                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        spinnerFilterCabang.adapter = spinnerAdapter
-
-                        spinnerFilterCabang.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
-                                filterCabang = if (pos == 0) "" else listCabang[pos - 1].namaCabang
-                                terapkanFilter()
-                            }
-                            override fun onNothingSelected(p: AdapterView<*>?) {}
-                        }
-                    }
-                    override fun onCancelled(error: DatabaseError) {}
-                })
-        }
-
-        // ===== LOAD DATA LAPORAN DARI FIREBASE =====
-        private fun loadLaporan() {
-            progressBar.visibility = View.VISIBLE
-            database.getReference("transaksi")
-                .orderByChild("tanggalMilis")
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        listLaporanOriginal.clear()
-                        for (data in snapshot.children) {
-                            val laporan = ModelLaporan(
-                                idTransaksi = data.child("idTransaksi").getValue(String::class.java)
-                                    ?: "",
-                                tanggal = data.child("tanggal").getValue(String::class.java) ?: "",
-                                tanggalMilis = data.child("tanggalMilis").getValue(Long::class.java)
-                                    ?: 0L,
-                                total = data.child("total").getValue(Long::class.java) ?: 0L,
-                                metodePembayaran = data.child("metodePembayaran")
-                                    .getValue(String::class.java) ?: "",
-                                namaKasir = data.child("namaKasir").getValue(String::class.java)
-                                    ?: "",
-                                cabang = data.child("cabang").getValue(String::class.java) ?: ""
-                            )
-                            listLaporanOriginal.add(laporan)
-                        }
-                        // Urutkan terbaru dulu
-                        listLaporanOriginal.sortByDescending { it.tanggalMilis }
-                        progressBar.visibility = View.GONE
-                        terapkanFilter()
-                    }
-                    override fun onCancelled(error: DatabaseError) {
-                        progressBar.visibility = View.GONE
-                        Toast.makeText(this@LaporanActivity, "Gagal memuat laporan", Toast.LENGTH_SHORT).show()
-                    }
-                })
-        }
-
-        // ===== TERAPKAN FILTER =====
-        private fun terapkanFilter() {
-            val sdf    = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val today  = Calendar.getInstance()
-            val data   = listLaporanOriginal.filter { laporan ->
-
-                // Filter mode waktu
-                val modeOk = when (filterMode) {
-                    "harian" -> {
-                        val hariIni = sdf.format(today.time)
-                        laporan.tanggal.startsWith(hariIni)
-                    }
-                    "mingguan" -> {
-                        val startWeek = Calendar.getInstance().apply {
-                            set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
-                        }
-                        laporan.tanggalMilis >= startWeek.timeInMillis
-                    }
-                    "bulanan" -> {
-                        val bulanIni = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(today.time)
-                        laporan.tanggal.startsWith(bulanIni)
-                    }
-                    else -> true
+                val dataLaporan = filtered.map {
+                    ModelLaporan(it.idTransaksi, it.tanggal, it.namaKasir, it.cabang, it.metodePembayaran, it.total)
                 }
 
-                // Filter tanggal manual
-                val tanggalOk = filterTanggal.isEmpty() || laporan.tanggal.startsWith(filterTanggal)
-
-                // Filter cabang
-                val cabangOk = filterCabang.isEmpty() || laporan.cabang == filterCabang
-
-                modeOk && tanggalOk && cabangOk
+                progressLaporan.visibility = View.GONE
+                tvTotalPemasukan.text = formatRupiah(filtered.sumOf { it.total })
+                tvTotalTrxLaporan.text = "${filtered.size} Transaksi"
+                tvEmptyLaporan.visibility = if (dataLaporan.isEmpty()) View.VISIBLE else View.GONE
+                adapter.updateData(dataLaporan)
             }
 
-            listLaporanFilter.clear()
-            listLaporanFilter.addAll(data)
-            adapterLaporan.updateData(listLaporanFilter)
-            updateSummary(listLaporanFilter)
-            updateEmptyState()
-        }
+            override fun onCancelled(error: DatabaseError) {
+                progressLaporan.visibility = View.GONE
+                Toast.makeText(this@LaporanActivity, "Gagal memuat data", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
-        // ===== UPDATE SUMMARY =====
-        private fun updateSummary(data: List<ModelLaporan>) {
-            tvSummaryTotalTransaksi.text = data.size.toString()
-            val totalPenjualan = data.sumOf { it.total }
-            tvSummaryTotalPenjualan.text = formatRupiah(totalPenjualan)
-        }
+    private fun cekTanggal(tglStr: String): Boolean {
+        return try {
+            val date = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).parse(tglStr) ?: return false
+            val cal = Calendar.getInstance()
+            val now = Calendar.getInstance()
+            cal.time = date
 
-        private fun updateEmptyState() {
-            layoutEmptyLaporan.visibility = if (listLaporanFilter.isEmpty()) View.VISIBLE else View.GONE
-            rvLaporan.visibility          = if (listLaporanFilter.isEmpty()) View.GONE else View.VISIBLE
-        }
+            when (filterMode) {
+                "HARIAN" -> cal.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR) && cal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+                "MINGGUAN" -> cal.get(Calendar.WEEK_OF_YEAR) == now.get(Calendar.WEEK_OF_YEAR) && cal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+                "BULANAN" -> cal.get(Calendar.MONTH) == now.get(Calendar.MONTH) && cal.get(Calendar.YEAR) == now.get(Calendar.YEAR)
+                else -> true
+            }
+        } catch (e: Exception) { false }
+    }
 
-        private fun formatRupiah(nominal: Long): String {
-            val format = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-            return format.format(nominal).replace("Rp", "Rp ").replace(",00", "")
-        }
+    private fun formatRupiah(harga: Long) = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(harga)
 }

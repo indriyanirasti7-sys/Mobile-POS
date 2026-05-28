@@ -1,9 +1,11 @@
 package com.rasti.selaraspos.model
 
-data class ModelPrinter (
-
+/**
+ * Model data untuk Printer Bluetooth
+ */
+data class ModelPrinter(
     var namaPrinter: String = "",
-    var alamatMac: String = "",      // Bluetooth MAC address
-    var statusTerhubung: Boolean = false
+    var alamatMac: String = "",
+    var statusKoneksi: Boolean = false
 )
 

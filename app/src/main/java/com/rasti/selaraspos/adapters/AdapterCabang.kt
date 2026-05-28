@@ -35,7 +35,7 @@ import com.rasti.selaraspos.R
             holder.tvNama.text    = cabang.namaCabang
             holder.tvAlamat.text  = cabang.alamatCabang.ifEmpty { "Alamat belum diisi" }
             holder.tvTelepon.text = cabang.teleponCabang.ifEmpty { "–" }
-            holder.tvPJ.text      = cabang.penanggungJawab.ifEmpty { "–" }
+            holder.tvPJ.text      = cabang.penanggungjawab.ifEmpty { "–" }
 
             holder.btnEdit.setOnClickListener { onEditClick(cabang) }
             holder.itemView.setOnClickListener { onEditClick(cabang) }
@@ -59,7 +59,7 @@ import com.rasti.selaraspos.R
                     dataOriginal.filter {
                         it.namaCabang.lowercase().contains(lower) ||
                                 it.alamatCabang.lowercase().contains(lower) ||
-                                it.penanggungJawab.lowercase().contains(lower)
+                                it.penanggungjawab.lowercase().contains(lower)
                     }
                 )
             }

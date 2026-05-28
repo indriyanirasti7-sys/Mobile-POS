@@ -1,16 +1,14 @@
 package com.rasti.selaraspos.model
 
+/**
+ * Model data untuk Produk
+ * Digunakan untuk menyimpan dan mengambil data produk dari Firebase
+ */
 data class ModelProduk(
-    var idProduk: String? = null,
-    var namaProduk: String? = null,
-    var skuProduk: String? = null,
-    var barcodeProduk: String? = null,
-    var kategoriProduk: String? = null,
-    var cabangProduk: String? = null,
-    var fotoProduk: String? = null,
-    var hargaBeli: Int = 0,
-    var nilaiProfit: Int = 0,
-    var hargaJual: Int = 0,
+    var idProduk: String = "",
+    var namaProduk: String = "",
+    var hargaJual: Long = 0,
     var stokProduk: Int = 0,
-    var stokTakTerbatas: Boolean = false
+    var kategoriProduk: String = "",
+    var fotoProduk: String = ""
 )
