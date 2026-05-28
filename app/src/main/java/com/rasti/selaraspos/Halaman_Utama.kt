@@ -22,6 +22,7 @@ import com.rasti.selaraspos.cabang.DataCabangActivity
 import com.rasti.selaraspos.kategori.DataKategoriActivity
 import com.rasti.selaraspos.model.ModelTransaksi
 import com.rasti.selaraspos.pegawai.DataPegawaiActivity
+import com.rasti.selaraspos.pelanggan.DataPelangganActivity  // 🔥 TAMBAHKAN IMPORT INI
 import com.rasti.selaraspos.produk.DataProdukActivity
 
 /**
@@ -53,28 +54,20 @@ class Halaman_Utama : AppCompatActivity() {
     }
 
     private fun initViews() {
-        // RecyclerView transaksi terbaru
         rvTransaksiTerbaru = findViewById(R.id.rvTransaksiTerbaru)
         cardKosong = findViewById(R.id.cardKosongTransaksi)
-
         adapterTerbaru = AdapterTransaksiTerbaru(listTransaksiTerbaru)
         rvTransaksiTerbaru.layoutManager = LinearLayoutManager(this)
         rvTransaksiTerbaru.adapter = adapterTerbaru
         rvTransaksiTerbaru.isNestedScrollingEnabled = false
     }
 
-    /**
-     * Ambil nama dari SharedPreferences (disimpan saat login)
-     */
     private fun tampilkanSapaUser() {
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val nama = prefs.getString("nama", "Pengguna") ?: "Pengguna"
         findViewById<TextView>(R.id.tvSapaUser).text = nama
     }
 
-    /**
-     * Statistik real-time menggunakan addValueEventListener
-     */
     private fun muatStatistik() {
         db.child("produk").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -98,45 +91,55 @@ class Halaman_Utama : AppCompatActivity() {
         })
     }
 
-    /**
-     * Muat 5 transaksi terbaru dari Firebase
-     * Diurutkan berdasarkan timestamp → tampil di card "Transaksi Terbaru"
-     */
     private fun muatTransaksiTerbaru() {
         db.child("transaksi")
-            .orderByChild("timestamp")  // urut berdasarkan waktu
-            .limitToLast(5)             // ambil 5 terbaru
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    listTransaksiTerbaru.clear()
+                    val tempList = mutableListOf<ModelTransaksi>()
+
                     for (snap in snapshot.children) {
-                        snap.getValue(ModelTransaksi::class.java)?.let {
-                            listTransaksiTerbaru.add(0, it) // tambah ke depan agar urutan terbaru dulu
+                        val trx = snap.getValue(ModelTransaksi::class.java)
+                        if (trx != null) {
+                            tempList.add(trx)
                         }
                     }
 
-                    // Tampilkan card kosong jika tidak ada data, RecyclerView jika ada
+                    tempList.sortByDescending { it.timestamp }
+                    val latestList = if (tempList.size > 5) tempList.take(5) else tempList
+
+                    listTransaksiTerbaru.clear()
+                    listTransaksiTerbaru.addAll(latestList)
+                    adapterTerbaru.updateData(listTransaksiTerbaru)
+
                     if (listTransaksiTerbaru.isEmpty()) {
                         cardKosong.visibility = View.VISIBLE
                         rvTransaksiTerbaru.visibility = View.GONE
                     } else {
                         cardKosong.visibility = View.GONE
                         rvTransaksiTerbaru.visibility = View.VISIBLE
-                        adapterTerbaru.updateData(listTransaksiTerbaru)
                     }
                 }
 
-                override fun onCancelled(error: DatabaseError) {}
+                override fun onCancelled(error: DatabaseError) {
+                    android.util.Log.e("DASHBOARD", "Error: ${error.message}")
+                }
             })
     }
 
     private fun aturNavigasiMenu() {
+        // Baris 0: Produk, Kategori, Pelanggan
         findViewById<MaterialCardView>(R.id.cardProduk).setOnClickListener {
             startActivity(Intent(this, DataProdukActivity::class.java))
         }
         findViewById<MaterialCardView>(R.id.cardKategori).setOnClickListener {
             startActivity(Intent(this, DataKategoriActivity::class.java))
         }
+        // 🔥 TAMBAHKAN PELANGGAN 🔥
+        findViewById<MaterialCardView>(R.id.cardPelanggan).setOnClickListener {
+            startActivity(Intent(this, DataPelangganActivity::class.java))
+        }
+
+        // Baris 1: Transaksi, Laporan, Akun
         findViewById<MaterialCardView>(R.id.cardTransaksi).setOnClickListener {
             startActivity(Intent(this, TransaksiActivity::class.java))
         }
@@ -146,6 +149,8 @@ class Halaman_Utama : AppCompatActivity() {
         findViewById<MaterialCardView>(R.id.cardAkun).setOnClickListener {
             startActivity(Intent(this, AkunActivity::class.java))
         }
+
+        // Baris 2: Pegawai, Cabang, Printer
         findViewById<MaterialCardView>(R.id.cardPegawai).setOnClickListener {
             startActivity(Intent(this, DataPegawaiActivity::class.java))
         }
@@ -174,7 +179,6 @@ class Halaman_Utama : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Perbarui nama user jika baru diubah dari AkunActivity
         tampilkanSapaUser()
     }
 }
