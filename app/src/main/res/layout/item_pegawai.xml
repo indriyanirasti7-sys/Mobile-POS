@@ -17,11 +17,44 @@
         android:padding="14dp"
         android:gravity="center_vertical">
 
+        <!-- ===== FOTO PROFIL / AVATAR ===== -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/imgAvatarPegawai"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/bg_avatar"
+                android:background="@drawable/bg_avatar"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                app:cornerRadius="25dp" />
+
+            <TextView
+                android:id="@+id/tvInitialPegawai"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:text="A"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/bg_gradient_header"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- ===== INFO PEGAWAI ===== -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="14dp">
 
             <TextView
                 android:id="@+id/tvNamaPegawai"
@@ -60,8 +93,22 @@
                 android:layout_marginTop="2dp"
                 android:maxLines="1"
                 android:ellipsize="end" />
+
+            <!-- 🔥 STATUS PEGAWAI 🔥 -->
+            <TextView
+                android:id="@+id/tvStatusPegawai"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aktif"
+                android:textSize="10sp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"
+                android:layout_marginTop="4dp"
+                app:cornerRadius="10dp" />
+
         </LinearLayout>
 
+        <!-- ===== TOMBOL AKSI ===== -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,5 +136,6 @@
                 app:backgroundTint="@color/error"
                 app:cornerRadius="8dp" />
         </LinearLayout>
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
