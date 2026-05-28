@@ -1,53 +1,54 @@
-package com.selaraspos.adapter
+package com.rasti.selaraspos.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.rasti.selaraspos.R // Pastikan import R sesuai package Anda
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.rasti.selaraspos.R
+import com.rasti.selaraspos.model.ModelCabang
+import com.rasti.selaraspos.model.ModelKeranjang
 import com.rasti.selaraspos.model.ModelLaporan
+import com.rasti.selaraspos.model.ModelPegawai
+import com.rasti.selaraspos.model.ModelProduk
 import java.text.NumberFormat
 import java.util.Locale
 
 class AdapterLaporan(
-    private val listLaporan: MutableList<ModelLaporan>
-) : RecyclerView.Adapter<AdapterLaporan.ViewHolder>() {
+    private val list: MutableList<ModelLaporan>
+) : RecyclerView.Adapter<AdapterLaporan.VH>() {
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // Inisialisasi manual
-        val tvId: TextView = view.findViewById(R.id.tvIdTransaksiLaporan)
-        val tvTanggal: TextView = view.findViewById(R.id.tvTanggalLaporan)
-        val tvKasir: TextView = view.findViewById(R.id.tvKasirLaporan)
-        val tvCabang: TextView = view.findViewById(R.id.tvCabangLaporan)
-        val tvMetode: TextView = view.findViewById(R.id.tvMetodeLaporan)
-        val tvTotal: TextView = view.findViewById(R.id.tvTotalLaporan)
-
-        fun bind(laporan: ModelLaporan) {
-            tvId.text = laporan.idTransaksi
-            tvTanggal.text = laporan.tanggal
-            tvKasir.text = laporan.namaKasir
-            tvCabang.text = laporan.cabang
-            tvMetode.text = laporan.metodePembayaran
-            tvTotal.text = formatRupiah(laporan.total)
-        }
+    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
+        val tvId: TextView = v.findViewById(R.id.tvIdTransaksiLaporan)
+        val tvTgl: TextView = v.findViewById(R.id.tvTanggalLaporan)
+        val tvKasir: TextView = v.findViewById(R.id.tvKasirLaporan)
+        val tvCabang: TextView = v.findViewById(R.id.tvCabangLaporan)
+        val tvMetode: TextView = v.findViewById(R.id.tvMetodeLaporan)
+        val tvTotal: TextView = v.findViewById(R.id.tvTotalLaporan)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_laporan, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(p: ViewGroup, t: Int) = VH(
+        LayoutInflater.from(p.context).inflate(R.layout.item_laporan, p, false)
+    )
+
+    override fun onBindViewHolder(h: VH, pos: Int) {
+        val l = list[pos]
+        h.tvId.text = "#${l.idTransaksi.takeLast(8).uppercase()}"
+        h.tvTgl.text = l.tanggal
+        h.tvKasir.text = "Kasir: ${l.namaKasir}"
+        h.tvCabang.text = l.cabang
+        h.tvMetode.text = l.metodePembayaran
+        h.tvTotal.text = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(l.total)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(listLaporan[position])
-
-    override fun getItemCount(): Int = listLaporan.size
+    override fun getItemCount() = list.size
 
     fun updateData(data: List<ModelLaporan>) {
-        listLaporan.clear()
-        listLaporan.addAll(data)
-        notifyDataSetChanged()
+        list.clear(); list.addAll(data); notifyDataSetChanged()
     }
-
-    private fun formatRupiah(harga: Long) =
-        NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(harga)
 }
