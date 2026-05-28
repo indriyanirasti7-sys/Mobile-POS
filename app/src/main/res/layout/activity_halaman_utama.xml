@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/primary_light"
+        android:background="@color/primary"
         android:paddingHorizontal="20dp"
         android:paddingTop="50dp"
         android:paddingBottom="20dp"
@@ -553,14 +553,12 @@
                 <ImageView
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:src="@drawable/beranda"
-                    app:tint="@color/primary" />
+                    android:src="@drawable/beranda" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Beranda"
-                    android:textSize="10sp"
-                    android:textColor="@color/primary" />
+                    android:textSize="10sp" />
             </LinearLayout>
 
             <!-- Transaksi -->
