@@ -1,219 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical"
-    tools:context=".cabang.ModCabangActivity">
+    android:background="@color/background_light"
+    android:fillViewport="true">
 
-    <!-- TOOLBAR -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:background="@drawable/bg_gradient_header"
-        android:paddingStart="8dp"
-        android:paddingEnd="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
+        <!-- Tombol Kembali di Pojok Kiri Atas -->
+        <ImageView
+            android:id="@+id/btnKembali"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:padding="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_revert"
-            android:tint="@color/white" />
+            android:contentDescription="Kembali"
+            android:layout_marginBottom="8dp" />
 
+        <!-- Judul Halaman -->
         <TextView
-            android:id="@+id/tvTitleMod"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Tambah Cabang"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:fontFamily="sans-serif-medium" />
-    </RelativeLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <LinearLayout
+            android:id="@+id/tvJudulModCabang"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:text="Tambah Cabang"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="24dp" />
 
-            <!-- FORM CARD -->
-            <androidx.cardview.widget.CardView
+        <!-- CardView untuk membungkus form -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/surface"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:strokeColor="@color/border"
-                app:strokeWidth="1dp">
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <LinearLayout
+                <!-- Field Nama Cabang -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilNamaCabang"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_marginBottom="16dp"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary"
+                    app:errorEnabled="true">
 
-                    <!-- Nama Cabang -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Nama Cabang"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNamaCabang"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
+                        android:hint="Nama Cabang"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etNamaCabang"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Contoh: Cabang Utama"
-                            android:inputType="textCapWords"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                <!-- Field Alamat Cabang -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAlamatCabang"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary">
 
-                    <!-- Alamat Cabang -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Alamat Cabang"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAlamatCabang"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
+                        android:hint="Alamat Cabang"
+                        android:inputType="textPostalAddress"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etAlamatCabang"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Jalan, kota, provinsi…"
-                            android:inputType="textMultiLine"
-                            android:minLines="2"
-                            android:gravity="top"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                <!-- Field Telepon Cabang -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilTeleponCabang"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary">
 
-                    <!-- Telepon -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Telepon Cabang"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTeleponCabang"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
+                        android:hint="Telepon Cabang"
+                        android:inputType="phone"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etTeleponCabang"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="021-xxxxxxxx / 08xxxxxxxxxx"
-                            android:inputType="phone"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                <!-- Field Penanggung Jawab -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPjCabang"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxStrokeColor="@color/primary"
+                    app:hintTextColor="@color/primary">
 
-                    <!-- Penanggung Jawab -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp"
-                        android:text="Penanggung Jawab"
-                        android:textColor="@color/text_primary"
-                        android:textSize="13sp"
-                        android:fontFamily="sans-serif-medium" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.SelarasPOS.TextInputLayout"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPjCabang"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
+                        android:hint="Penanggung Jawab"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPenanggungJawab"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Nama penanggung jawab"
-                            android:inputType="textPersonName"
-                            android:textColor="@color/text_primary"
-                            android:textSize="14sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- SAVE BUTTON -->
-            <Button
-                android:id="@+id/btnSimpanCabang"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/bg_button_primary"
-                android:text="Simpan Cabang"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-medium" />
-
-            <!-- DELETE BUTTON -->
-            <Button
-                android:id="@+id/btnHapusCabang"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_tab_unselected"
-                android:text="Hapus Cabang"
-                android:textColor="@color/error"
-                android:textSize="16sp"
-                android:visibility="gone" />
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- Loading overlay -->
-    <FrameLayout
-        android:id="@+id/loadingOverlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/scrim"
-        android:visibility="gone">
-
+        <!-- Progress Bar -->
         <ProgressBar
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:id="@+id/progressSimpanCabang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
             android:indeterminateTint="@color/primary" />
-    </FrameLayout>
 
-</LinearLayout>
+        <!-- Tombol Simpan Cabang -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSimpanCabang"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Simpan Cabang"
+            android:textSize="16sp"
+            android:textColor="@color/text_on_primary"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/primary" />
+
+    </LinearLayout>
+</ScrollView>

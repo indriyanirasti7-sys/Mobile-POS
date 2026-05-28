@@ -475,9 +475,20 @@
                 android:layout_marginBottom="12dp" />
 
             <!-- Card Kosong untuk Transaksi Terbaru -->
-            <com.google.android.material.card.MaterialCardView
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTransaksiTerbaru"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/surface"
+                android:layout_marginBottom="16dp"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardKosongTransaksi"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:visibility="gone"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="2dp"
                 app:cardBackgroundColor="@color/surface"
