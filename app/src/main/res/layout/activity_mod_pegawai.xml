@@ -13,7 +13,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Header dengan Tombol Kembali di pojok kiri -->
+        <!-- Header dengan Tombol Kembali -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,6 +24,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_back"
+                android:tint="@color/black"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="center"
                 android:contentDescription="Kembali" />
@@ -132,7 +133,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             app:boxStrokeColor="@color/primary"
             app:hintTextColor="@color/primary"
             app:errorEnabled="true">
@@ -145,6 +146,50 @@
                 android:inputType="none"
                 android:textColor="@color/text_primary" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ===== STATUS PEGAWAI (AKTIF / TIDAK AKTIF) ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status Pegawai"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:cardBackgroundColor="@color/surface_variant"
+            android:layout_marginBottom="24dp">
+
+            <RadioGroup
+                android:id="@+id/rgStatusPegawai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbAktif"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="✅ Aktif"
+                    android:textColor="@color/success"
+                    android:checked="true" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rbTidakAktif"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="❌ Tidak Aktif"
+                    android:textColor="@color/error" />
+
+            </RadioGroup>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Progress Bar -->
         <ProgressBar
