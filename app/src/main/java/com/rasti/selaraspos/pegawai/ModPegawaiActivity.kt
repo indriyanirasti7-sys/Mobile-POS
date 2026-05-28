@@ -1,39 +1,20 @@
 package com.rasti.selaraspos.pegawai
 
-
-import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.rasti.selaraspos.R
-import com.rasti.selaraspos.adapters.AdapterCabang
-import com.rasti.selaraspos.adapters.AdapterPegawai
-import com.rasti.selaraspos.databinding.ActivityDataCabangBinding
-import com.rasti.selaraspos.databinding.ActivityDataPegawaiBinding
-import com.rasti.selaraspos.databinding.ActivityModCabangBinding
 import com.rasti.selaraspos.databinding.ActivityModPegawaiBinding
-import com.rasti.selaraspos.databinding.ActivityPrinterBinding
-import com.rasti.selaraspos.model.ModelCabang
 import com.rasti.selaraspos.model.ModelPegawai
-import java.io.OutputStream
-import java.util.UUID
 
 class ModPegawaiActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityModPegawaiBinding
     private val db = FirebaseDatabase.getInstance().reference.child("pegawai")
-    private var mode = "TAMBAH"; private var idEdit = ""
+    private var mode = "TAMBAH"
+    private var idEdit = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +36,18 @@ class ModPegawaiActivity : AppCompatActivity() {
             binding.etAlamatPegawai.setText(intent.getStringExtra("ALAMAT") ?: "")
             binding.etEmailPegawai.setText(intent.getStringExtra("EMAIL") ?: "")
             binding.tilEmailPegawai.isEnabled = false
-        } else binding.actvRole.setText("kasir", false)
+
+            // 🔥 SET STATUS 🔥
+            val status = intent.getStringExtra("STATUS") ?: "aktif"
+            if (status == "aktif") {
+                binding.rbAktif.isChecked = true
+            } else {
+                binding.rbTidakAktif.isChecked = true
+            }
+        } else {
+            binding.actvRole.setText("kasir", false)
+            binding.rbAktif.isChecked = true  // Default aktif
+        }
 
         binding.btnSimpanPegawai.setOnClickListener { simpan() }
         binding.btnKembali.setOnClickListener { finish() }
@@ -67,20 +59,64 @@ class ModPegawaiActivity : AppCompatActivity() {
         val noHp = binding.etNoHp.text.toString().trim()
         val alamat = binding.etAlamatPegawai.text.toString().trim()
         val email = binding.etEmailPegawai.text.toString().trim()
-        if (nama.isEmpty()) { binding.tilNamaPegawai.error = "Wajib diisi"; return }
-        if (role.isEmpty()) { binding.tilRole.error = "Wajib dipilih"; return }
-        binding.tilNamaPegawai.error = null; binding.tilRole.error = null
-        binding.progressSimpanPegawai.visibility = View.VISIBLE; binding.btnSimpanPegawai.isEnabled = false
+        val status = if (binding.rbAktif.isChecked) "aktif" else "tidak_aktif"
+
+        if (nama.isEmpty()) {
+            binding.tilNamaPegawai.error = "Nama wajib diisi"
+            return
+        }
+        if (role.isEmpty()) {
+            binding.tilRole.error = "Role wajib dipilih"
+            return
+        }
+
+        binding.tilNamaPegawai.error = null
+        binding.tilRole.error = null
+        binding.progressSimpanPegawai.visibility = View.VISIBLE
+        binding.btnSimpanPegawai.isEnabled = false
 
         if (mode == "TAMBAH") {
             val id = db.push().key ?: return
-            db.child(id).setValue(ModelPegawai(id, nama, role, noHp, alamat, email))
-                .addOnSuccessListener { binding.progressSimpanPegawai.visibility = View.GONE; Toast.makeText(this, "✅ Pegawai ditambahkan!", Toast.LENGTH_SHORT).show(); finish() }
-                .addOnFailureListener { binding.progressSimpanPegawai.visibility = View.GONE; binding.btnSimpanPegawai.isEnabled = true }
+            val pegawai = ModelPegawai(
+                idPegawai = id,
+                namaPegawai = nama,
+                role = role,
+                noHp = noHp,
+                alamat = alamat,
+                email = email,
+                fotoPegawai = "",
+                status = status
+            )
+            db.child(id).setValue(pegawai)
+                .addOnSuccessListener {
+                    binding.progressSimpanPegawai.visibility = View.GONE
+                    Toast.makeText(this, "✅ Pegawai ditambahkan!", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                .addOnFailureListener {
+                    binding.progressSimpanPegawai.visibility = View.GONE
+                    binding.btnSimpanPegawai.isEnabled = true
+                    Toast.makeText(this, "❌ Gagal menambahkan pegawai", Toast.LENGTH_SHORT).show()
+                }
         } else {
-            db.child(idEdit).updateChildren(mapOf("namaPegawai" to nama, "role" to role, "noHp" to noHp, "alamat" to alamat))
-                .addOnSuccessListener { binding.progressSimpanPegawai.visibility = View.GONE; Toast.makeText(this, "✅ Pegawai diperbarui!", Toast.LENGTH_SHORT).show(); finish() }
-                .addOnFailureListener { binding.progressSimpanPegawai.visibility = View.GONE; binding.btnSimpanPegawai.isEnabled = true }
+            val updates = mapOf(
+                "namaPegawai" to nama,
+                "role" to role,
+                "noHp" to noHp,
+                "alamat" to alamat,
+                "status" to status
+            )
+            db.child(idEdit).updateChildren(updates)
+                .addOnSuccessListener {
+                    binding.progressSimpanPegawai.visibility = View.GONE
+                    Toast.makeText(this, "✅ Pegawai diperbarui!", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                .addOnFailureListener {
+                    binding.progressSimpanPegawai.visibility = View.GONE
+                    binding.btnSimpanPegawai.isEnabled = true
+                    Toast.makeText(this, "❌ Gagal memperbarui pegawai", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }
