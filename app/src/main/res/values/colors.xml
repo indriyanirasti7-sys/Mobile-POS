@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_light">#d0d6eb</color>
-    <color name="white_dark">#e3e1f2</color>
-    <color name="white_pink">#f0a4c5</color>
-    <color name="white_pink2">#f8dde2</color>
-    <color name="cream">#f7f7d7</color>
-    <color name="green_light">#E8F5E9</color>
-    <color name="green_dark">#2E7D32</color>
-    <color name="purple">#c7a6ed</color>
-    <color name="navy">#010080</color>
-    <color name="bottom_nav_color">#6200EE</color>
         <!-- ===== SELARAS POS COLOR PALETTE ===== -->
 
         <!-- Primary Colors -->
@@ -17,6 +7,7 @@
         <color name="primary_dark">#E78FA5</color>
         <color name="primary_light">#FFD3DE</color>
         <color name="primary_variant">#F9809A</color>
+        <color name="warna_lain">#ec9c9d</color>
 
         <!-- Background -->
         <color name="background">#E9DCE3</color>
