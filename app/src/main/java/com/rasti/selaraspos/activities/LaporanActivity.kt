@@ -8,27 +8,25 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.rasti.selaraspos.LoginActivity
 import com.rasti.selaraspos.R
-import com.rasti.selaraspos.RoleHelper
+import java.util.UUID
 import com.rasti.selaraspos.adapters.AdapterLaporan
-import com.rasti.selaraspos.databinding.ActivityAkunBinding
 import com.rasti.selaraspos.databinding.ActivityLaporanBinding
 import com.rasti.selaraspos.model.ModelLaporan
 import com.rasti.selaraspos.model.ModelTransaksi
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-
-// ─────────────────────────────────────────────────────────────────────────────
-// LaporanActivity
-// ─────────────────────────────────────────────────────────────────────────────
+import java.util.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.net.Uri
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.FileOutputStream
 
 class LaporanActivity : AppCompatActivity() {
 
@@ -51,6 +49,16 @@ class LaporanActivity : AppCompatActivity() {
         muatCabang()
         aturTombolFilter()
         muatLaporan()
+
+        // 🔥 TOMBOL SHARE 🔥
+        binding.btnShareLaporan.setOnClickListener {
+            shareLaporan()
+        }
+
+        // 🔥 TOMBOL PRINT 🔥
+        binding.btnPrintLaporan.setOnClickListener {
+            printLaporan()
+        }
 
         binding.btnKembali.setOnClickListener { finish() }
     }
@@ -140,9 +148,145 @@ class LaporanActivity : AppCompatActivity() {
             }
         } catch (_: Exception) { false }
     }
+
+    // ===== 🔥 FUNGSI SHARE LAPORAN 🔥 =====
+    private fun shareLaporan() {
+        if (listLaporan.isEmpty()) {
+            Toast.makeText(this, "Tidak ada data laporan untuk dibagikan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val totalPemasukan = binding.tvTotalPemasukan.text.toString()
+        val totalTransaksi = binding.tvTotalTrxLaporan.text.toString()
+        val periode = when (filterMode) {
+            "HARIAN" -> "Harian"
+            "MINGGUAN" -> "Mingguan"
+            "BULANAN" -> "Bulanan"
+            else -> "Semua"
+        }
+
+        val sb = StringBuilder()
+        sb.append("═══════════════════════════════════\n")
+        sb.append("        📊 LAPORAN SELARAS POS 📊\n")
+        sb.append("═══════════════════════════════════\n\n")
+        sb.append("Periode: $periode\n")
+        sb.append("Cabang: $cabangFilter\n")
+        sb.append("Total Pemasukan: $totalPemasukan\n")
+        sb.append("Total Transaksi: $totalTransaksi\n")
+        sb.append("\n───────────────────────────────────\n")
+        sb.append("📋 DETAIL TRANSAKSI:\n")
+        sb.append("───────────────────────────────────\n\n")
+
+        listLaporan.forEachIndexed { index, item ->
+            sb.append("${index + 1}. ID: ${item.idTransaksi.takeLast(8)}\n")
+            sb.append("   Tanggal: ${item.tanggal}\n")
+            sb.append("   Kasir: ${item.namaKasir}\n")
+            sb.append("   Cabang: ${item.cabang}\n")
+            sb.append("   Metode: ${item.metodePembayaran}\n")
+            sb.append("   Total: ${NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(item.total)}\n")
+            sb.append("\n")
+        }
+
+        sb.append("═══════════════════════════════════\n")
+        sb.append("      Terima kasih telah menggunakan\n")
+        sb.append("           Selaras POS 🤍\n")
+        sb.append("═══════════════════════════════════\n")
+
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, sb.toString())
+            type = "text/plain"
+        }
+        startActivity(Intent.createChooser(shareIntent, "Bagikan Laporan via"))
+    }
+
+    // ===== 🔥 FUNGSI PRINT LAPORAN (Ke Printer Bluetooth) 🔥 =====
+    private fun printLaporan() {
+        if (listLaporan.isEmpty()) {
+            Toast.makeText(this, "Tidak ada data laporan untuk dicetak", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val prefs = getSharedPreferences("printer_prefs", MODE_PRIVATE)
+        val macAddress = prefs.getString("mac_printer", "")
+
+        if (macAddress.isNullOrEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle("Printer Belum Terhubung")
+                .setMessage("Apakah Anda ingin mengatur printer terlebih dahulu?")
+                .setPositiveButton("Atur Printer") { _, _ ->
+                    startActivity(Intent(this, PrinterActivity::class.java))
+                }
+                .setNegativeButton("Batal", null)
+                .show()
+            return
+        }
+
+        val totalPemasukan = binding.tvTotalPemasukan.text.toString()
+        val totalTransaksi = binding.tvTotalTrxLaporan.text.toString()
+        val periode = when (filterMode) {
+            "HARIAN" -> "Harian"
+            "MINGGUAN" -> "Mingguan"
+            "BULANAN" -> "Bulanan"
+            else -> "Semua"
+        }
+
+        val sb = StringBuilder()
+        sb.append("\n\n")
+        sb.append("============================\n")
+        sb.append("      📊 LAPORAN PENJUALAN\n")
+        sb.append("============================\n")
+        sb.append("Periode: $periode\n")
+        sb.append("Cabang: $cabangFilter\n")
+        sb.append("Tanggal: ${SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())}\n")
+        sb.append("----------------------------\n")
+        sb.append("Total Pemasukan: $totalPemasukan\n")
+        sb.append("Total Transaksi: $totalTransaksi\n")
+        sb.append("----------------------------\n")
+        sb.append("DETAIL TRANSAKSI:\n")
+        sb.append("----------------------------\n")
+
+        listLaporan.forEachIndexed { index, item ->
+            sb.append("${index + 1}. #${item.idTransaksi.takeLast(8)}\n")
+            sb.append("   ${item.tanggal}\n")
+            sb.append("   ${item.namaKasir} | ${item.metodePembayaran}\n")
+            sb.append("   Total: ${NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(item.total)}\n")
+            sb.append("\n")
+        }
+
+        sb.append("============================\n")
+        sb.append("   Terima kasih 🤍\n")
+        sb.append("   Selaras POS\n")
+        sb.append("============================\n\n\n")
+
+        // Kirim ke printer
+        val btAdapter = android.bluetooth.BluetoothAdapter.getDefaultAdapter()
+        val device = btAdapter?.getRemoteDevice(macAddress)
+
+        if (device == null) {
+            Toast.makeText(this, "Printer tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Thread {
+            try {
+                val socket = device.createRfcommSocketToServiceRecord(
+                    UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                )
+                socket.connect()
+                val os = socket.outputStream
+                os.write(sb.toString().toByteArray(Charsets.UTF_8))
+                os.flush()
+                os.close()
+                socket.close()
+                runOnUiThread {
+                    Toast.makeText(this, "✅ Laporan berhasil dicetak!", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this, "❌ Gagal mencetak: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.start()
+    }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// AkunActivity
-// ─────────────────────────────────────────────────────────────────────────────
-
