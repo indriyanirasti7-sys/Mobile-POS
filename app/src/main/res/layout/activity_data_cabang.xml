@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@color/background_light">
 
-    <!-- Toolbar / Header dengan Tombol Kembali -->
+    <!-- Header dengan Tombol Kembali -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Data Pegawai"
+                android:text="Data Cabang"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_on_primary"
@@ -52,9 +52,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- RecyclerView untuk daftar pegawai -->
+        <!-- RecyclerView untuk daftar cabang -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPegawai"
+            android:id="@+id/rvCabang"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="12dp"
@@ -62,7 +62,7 @@
 
         <!-- Progress Bar saat loading -->
         <ProgressBar
-            android:id="@+id/progressPegawai"
+            android:id="@+id/progressCabang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -71,18 +71,18 @@
 
         <!-- TextView saat data kosong -->
         <TextView
-            android:id="@+id/tvEmptyPegawai"
+            android:id="@+id/tvEmptyCabang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Belum ada data pegawai"
+            android:text="Belum ada data cabang"
             android:textSize="14sp"
             android:textColor="@color/text_secondary"
             android:visibility="gone" />
 
-        <!-- FAB Tambah Pegawai -->
+        <!-- FAB Tambah Cabang -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabTambahPegawai"
+            android:id="@+id/fabTambahCabang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

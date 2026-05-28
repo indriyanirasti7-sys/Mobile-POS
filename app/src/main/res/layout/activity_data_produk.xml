@@ -24,7 +24,7 @@
             android:id="@+id/btnKembali"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:src="@drawable/kembali"
+            android:src="@drawable/ic_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             app:tint="@color/text_on_primary" />
 
@@ -48,7 +48,6 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
         android:hint="Cari produk..."
-        app:startIconDrawable="@drawable/search"
         app:boxCornerRadiusTopStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
