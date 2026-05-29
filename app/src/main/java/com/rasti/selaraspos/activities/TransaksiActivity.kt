@@ -1,6 +1,7 @@
 package com.rasti.selaraspos.activities
 
 import android.app.Dialog
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -16,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -360,7 +362,6 @@ class TransaksiActivity : AppCompatActivity() {
                 kurangiStok()
                 dialog.dismiss()
 
-                // 🔥 TAMPILKAN DIALOG SUKSES DENGAN DETAIL 🔥
                 tampilkanDialogSukses(transaksi)
 
                 listKeranjang.clear()
@@ -386,11 +387,10 @@ class TransaksiActivity : AppCompatActivity() {
         }
     }
 
-    // 🔥 DIALOG SUKSES TRANSAKSI DENGAN SHARE & PRINT 🔥
     private fun tampilkanDialogSukses(transaksi: ModelTransaksi) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.ddialog_transaksi_sukses)
+        dialog.setContentView(R.layout.dialog_transaksi_sukses)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.9).toInt(),
@@ -398,7 +398,6 @@ class TransaksiActivity : AppCompatActivity() {
         )
         dialog.setCancelable(false)
 
-        // Set data transaksi
         dialog.findViewById<TextView>(R.id.tvDetailId).text = "#${transaksi.idTransaksi.takeLast(8)}"
         dialog.findViewById<TextView>(R.id.tvDetailTanggal).text = transaksi.tanggal
         dialog.findViewById<TextView>(R.id.tvDetailKasir).text = transaksi.namaKasir
@@ -408,29 +407,111 @@ class TransaksiActivity : AppCompatActivity() {
         dialog.findViewById<TextView>(R.id.tvDetailBayar).text = formatRupiah(transaksi.uangBayar)
         dialog.findViewById<TextView>(R.id.tvDetailKembali).text = formatRupiah(transaksi.kembalian)
 
-        // Setup RecyclerView produk
         val rvDetailProduk = dialog.findViewById<RecyclerView>(R.id.rvDetailProduk)
         val detailList = transaksi.detailProduk.values.toList()
         rvDetailProduk.layoutManager = LinearLayoutManager(this)
         rvDetailProduk.adapter = AdapterDetailTransaksi(detailList)
 
-        // Tombol Share
         dialog.findViewById<Button>(R.id.btnShareTransaksi).setOnClickListener {
             shareTransaksi(transaksi)
         }
 
-        // Tombol Print
+        // 🔥 PRINT LANGSUNG (TANPA BUKA PrinterActivity) 🔥
         dialog.findViewById<Button>(R.id.btnPrintTransaksi).setOnClickListener {
-            printTransaksi(transaksi)
+            cetakStrukLangsung(transaksi)
             dialog.dismiss()
         }
 
-        // Tombol Tutup
         dialog.findViewById<Button>(R.id.btnCloseDialog).setOnClickListener {
             dialog.dismiss()
         }
 
         dialog.show()
+    }
+
+    // 🔥 FUNGSI CETAK STRUK LANGSUNG 🔥
+    private fun cetakStrukLangsung(transaksi: ModelTransaksi) {
+        val prefs = getSharedPreferences("printer_prefs", MODE_PRIVATE)
+        val macAddress = prefs.getString("mac_printer", "")
+
+        if (macAddress.isNullOrEmpty()) {
+            AlertDialog.Builder(this)
+                .setTitle("Printer Belum Terhubung")
+                .setMessage("Apakah Anda ingin mengatur printer terlebih dahulu?")
+                .setPositiveButton("Atur Printer") { _, _ ->
+                    startActivity(Intent(this, PrinterActivity::class.java))
+                }
+                .setNegativeButton("Batal", null)
+                .show()
+            return
+        }
+
+        val btAdapter = BluetoothAdapter.getDefaultAdapter()
+        val device = btAdapter?.getRemoteDevice(macAddress)
+
+        if (device == null) {
+            Toast.makeText(this, "Printer tidak ditemukan", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Toast.makeText(this, "🖨️ Mencetak struk...", Toast.LENGTH_SHORT).show()
+
+        Thread {
+            try {
+                val socket = device.createRfcommSocketToServiceRecord(
+                    java.util.UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                )
+                socket.connect()
+                val os = socket.outputStream
+
+                val struk = buatStrukPrint(transaksi)
+                os.write(struk.toByteArray(Charsets.UTF_8))
+                os.flush()
+                os.close()
+                socket.close()
+
+                runOnUiThread {
+                    Toast.makeText(this, "✅ Struk berhasil dicetak!", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this, "❌ Gagal mencetak: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }.start()
+    }
+
+    private fun buatStrukPrint(transaksi: ModelTransaksi): String {
+        val sb = StringBuilder()
+        sb.append("\n\n")
+        sb.append("============================\n")
+        sb.append("      *** SELARAS POS ***\n")
+        sb.append("============================\n")
+        sb.append("ID     : #${transaksi.idTransaksi.takeLast(8)}\n")
+        sb.append("Tanggal: ${transaksi.tanggal}\n")
+        sb.append("Kasir  : ${transaksi.namaKasir}\n")
+        sb.append("Cabang : ${transaksi.cabang}\n")
+        sb.append("----------------------------\n")
+        sb.append("ITEM               QTY   HARGA\n")
+        sb.append("----------------------------\n")
+
+        transaksi.detailProduk.values.forEach { item ->
+            val namaSingkat = if (item.namaProduk.length > 15)
+                item.namaProduk.substring(0, 12) + "..."
+            else item.namaProduk
+            sb.append(String.format("%-16s %3d   %s\n", namaSingkat, item.qty, formatRupiah(item.subtotal)))
+        }
+
+        sb.append("----------------------------\n")
+        sb.append(String.format("%-21s %s\n", "TOTAL:", formatRupiah(transaksi.total)))
+        sb.append(String.format("%-21s %s\n", "BAYAR:", formatRupiah(transaksi.uangBayar)))
+        sb.append(String.format("%-21s %s\n", "KEMBALI:", formatRupiah(transaksi.kembalian)))
+        sb.append("----------------------------\n")
+        sb.append("Metode: ${transaksi.metodePembayaran}\n")
+        sb.append("\n   Terima kasih sudah\n")
+        sb.append("        berbelanja!\n")
+        sb.append("============================\n\n\n")
+        return sb.toString()
     }
 
     private fun shareTransaksi(transaksi: ModelTransaksi) {
@@ -470,11 +551,6 @@ class TransaksiActivity : AppCompatActivity() {
             type = "text/plain"
         }
         startActivity(Intent.createChooser(shareIntent, "Bagikan Struk via"))
-    }
-
-    private fun printTransaksi(transaksi: ModelTransaksi) {
-        PrinterActivity.setTransaksiUntukPrint(transaksi)
-        startActivity(Intent(this, PrinterActivity::class.java))
     }
 
     private fun formatRupiah(value: Long): String {

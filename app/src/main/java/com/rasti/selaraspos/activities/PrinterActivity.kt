@@ -58,7 +58,7 @@ class PrinterActivity : AppCompatActivity() {
         binding.btnDisconnect.setOnClickListener { disconnect() }
         binding.btnKembali.setOnClickListener { finish() }
 
-        // Jika ada transaksi yang menunggu cetak, cetak otomatis
+        // 🔥 Jika ada transaksi yang menunggu cetak, cetak otomatis 🔥
         if (cachedTransaksi != null) {
             cetakStruk(cachedTransaksi!!)
             cachedTransaksi = null
@@ -164,9 +164,12 @@ class PrinterActivity : AppCompatActivity() {
         }.start()
     }
 
+    // 🔥 FUNGSI CETAK STRUK 🔥
     fun cetakStruk(transaksi: ModelTransaksi) {
         if (outputStream == null) {
-            Toast.makeText(this, "Printer belum terhubung", Toast.LENGTH_SHORT).show()
+            runOnUiThread {
+                Toast.makeText(this, "❌ Printer belum terhubung", Toast.LENGTH_SHORT).show()
+            }
             return
         }
 
@@ -180,7 +183,7 @@ class PrinterActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 runOnUiThread {
-                    Toast.makeText(this, "❌ Gagal cetak struk: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "❌ Gagal cetak: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }.start()
@@ -192,7 +195,7 @@ class PrinterActivity : AppCompatActivity() {
         sb.append("============================\n")
         sb.append("      *** SELARAS POS ***\n")
         sb.append("============================\n")
-        sb.append("Tanggal: ${transaksi.tanggal}\n")
+        sb.append("Tanggal : ${transaksi.tanggal}\n")
         sb.append("Kasir   : ${transaksi.namaKasir}\n")
         sb.append("Cabang  : ${transaksi.cabang}\n")
         sb.append("----------------------------\n")
@@ -203,7 +206,7 @@ class PrinterActivity : AppCompatActivity() {
             val namaSingkat = if (item.namaProduk.length > 15)
                 item.namaProduk.substring(0, 12) + "..."
             else item.namaProduk
-            sb.append(String.format("%-16s %3d   %s\n", namaSingkat, item.qty, formatRupiah(item.hargaJual)))
+            sb.append(String.format("%-16s %3d   %s\n", namaSingkat, item.qty, formatRupiah(item.subtotal)))
         }
 
         sb.append("----------------------------\n")
