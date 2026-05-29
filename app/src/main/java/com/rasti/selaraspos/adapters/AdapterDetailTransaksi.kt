@@ -30,12 +30,8 @@ class AdapterDetailTransaksi(
         val item = list[position]
         holder.tvNama.text = item.namaProduk
         holder.tvQty.text = "x${item.qty}"
-        holder.tvHarga.text = formatRupiah(item.subtotal)
+        holder.tvHarga.text = NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(item.subtotal)
     }
 
     override fun getItemCount() = list.size
-
-    private fun formatRupiah(value: Long): String {
-        return NumberFormat.getCurrencyInstance(Locale("id", "ID")).format(value)
-    }
 }
