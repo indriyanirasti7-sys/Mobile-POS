@@ -173,30 +173,5 @@
 
 ---
 
-### 🌟 **Testimoni (Contoh)**
 
-> *"Sejak pakai Selaras POS, transaksi jadi lebih cepat. Stok barang otomatis berkurang, laporan keuangan jadi rapi!"*  
-> — **Budi, Pemilik Cafe**
-
-> *"Aplikasinya ringan, mudah dipakai kasir. Fitur dark mode-nya enak dilihat!"*  
-> — **Siti, Owner Butik**
-
----
-
-### 📞 **Dukungan**
-
-- 💬 **Live Chat** - Tersedia di aplikasi
-- 📧 **Email** - support@selaraspos.com
-- 📱 **WhatsApp** - 0812-3456-7890
-- 🐙 **GitHub** - [github.com/selaraspos](https://github.com)
-
----
-
-<p align="center">
-  <b>✨ Download sekarang dan rasakan kemudahan bertransaksi! ✨</b>
-</p>
-
-<p align="center">
-  <i>Selaras POS - Selaras dengan bisnis Anda</i>
-</p>
 
