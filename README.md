@@ -1,31 +1,50 @@
-## 📱Aplikasi Pos
+## 📱 Dokumentasi Aplikasi Mobile-POS
 
+Berikut adalah kumpulan tangkapan layar fitur yang terdapat pada aplikasi:
+
+### 1. Autentikasi
 <p align="center">
-  <img src="gambar/akun.jpeg" width="200">
-  <img src="gambar/dashboard.jpeg" width="200">
-  <img src="gambar/produk.jpeg" width="200">
-  <img src="gambar/kategori.jpeg" width="200">
+  <img src="pos/login.jpeg" width="200">
+  <img src="pos/register.jpeg" width="200">
 </p>
 
+### 2. Dashboard & Pengguna
 <p align="center">
-  <img src="gambar/pegawai.jpeg" width="200">
-  <img src="gambar/tambah%20pegawai.jpeg" width="200">
-  <img src="gambar/pelanggan.jpeg" width="200">
-  <img src="gambar/data%20cabang.jpeg" width="200">
+  <img src="pos/halaman%20admin.jpeg" width="200">
+  <img src="pos/halaman%20kasir.jpeg" width="200">
+  <img src="pos/akun%20admin.jpeg" width="200">
+  <img src="pos/akun%20kasir.jpeg" width="200">
 </p>
 
+### 3. Manajemen Data Master
 <p align="center">
-  <img src="gambar/tambah%20cabang.jpeg" width="200">
-  <img src="gambar/tambah%20produk.jpeg" width="200">
-  <img src="gambar/tambah%20kategori.jpeg" width="200">
-  <img src="gambar/konfirmasi%20pembayaran.jpeg" width="200">
+  <img src="pos/produk.jpeg" width="200">
+  <img src="pos/tambah%20produk.jpeg" width="200">
+  <img src="pos/kategori.jpeg" width="200">
+  <img src="pos/tambah%20kategori.jpeg" width="200">
 </p>
 <p align="center">
-  <img src="gambar/transaksi%20berhasil.jpeg" width="200">
-  <img src="gambar/laporan.jpeg" width="200">
-  <img src="gambar/printer.jpeg" width="200">
+  <img src="pos/data%20pegawai.jpeg" width="200">
+  <img src="pos/tambah%20pegawai.jpeg" width="200">
+  <img src="pos/data%20pelanggan.jpeg" width="200">
+  <img src="pos/tambah%20pelanggan.jpeg" width="200">
+</p>
+<p align="center">
+  <img src="pos/data%20cabang.jpeg" width="200">
+  <img src="pos/tambah%20cabang.jpeg" width="200">
 </p>
 
+### 4. Transaksi & Laporan
+<p align="center">
+  <img src="pos/dialog%20pembayaran.jpeg" width="200">
+  <img src="pos/transaksi.jpeg" width="200">
+  <img src="pos/nota.jpeg" width="200">
+  <img src="pos/printer.jpeg" width="200">
+</p>
+<p align="center">
+  <img src="pos/laporan.jpeg" width="200">
+  <img src="pos/notifikasi.jpeg" width="200">
+</p>
 
 
 ## Deskripsi Aplikasi Selaras POS
