@@ -1,4 +1,4 @@
-## 📱 Screenshots Aplikasi
+## 📱Aplikasi Pos
 
 <p align="center">
   <img src="gambar/akun.jpeg" width="200">
