@@ -1,4 +1,4 @@
-## 📱 Dokumentasi Aplikasi Mobile-POS
+## 📱 Aplikasi Mobile-POS
 
 Berikut adalah kumpulan tangkapan layar fitur yang terdapat pada aplikasi:
 
